@@ -1,7 +1,3 @@
-
-
-#include <forsyde.hpp>
-
 #ifndef ROS_WRAPPERS_HPP
 #define ROS_WRAPPERS_HPP
 
@@ -16,36 +12,13 @@
 #include "abst_ext.hpp"
 #include <stdio.h>
 
-void chatterCallback(const std_msgs::String::ConstPtr& msg)
-{
-  ROS_INFO("I heard: [%s]", msg->data.c_str());
-}
 
 void Callback_Sonar(const sensor_msgs::Range::ConstPtr& msg)
 {
- 
   double max_range = msg-> max_range ;
   double min_range = msg-> min_range ;
-  double rang = msg->range ; 
-  
-  
-  //ROS_INFO("Sonar Seq: [%d]", msg->header.seq);
-  ROS_INFO("Sonar Range: [%f]", msg->range);
-
-}
-
-void callback(const sensor_msgs::Range::ConstPtr &in1, const sensor_msgs::Range::ConstPtr &in2)
-{
-  ROS_INFO("Synchronization successful");
-}
-
-void Callback_Jonit(const sensor_msgs::JointState::ConstPtr& msg)
-{
-    //ROS_INFO("Joint State: [%f]", msg->position[1]);
-
-    double x = msg->position[1];
-    double y = msg->position[2];
-    double z = msg->position[3];
+  double range = msg->range ; 
+  //ROS_INFO("Sonar Range: [%f]", msg->range);
 }
 
 namespace ForSyDe
@@ -66,6 +39,9 @@ public:
     int argc;
     char **argv; 
 
+
+
+
 roswrap(const sc_module_name& _name, const std::string& topic_name_sender, const std::string& topic_name_receiver) : 
 sy_process(_name), iport1("iport1"), oport1("oport1"), topic_name_sender(topic_name_sender), topic_name_receiver(topic_name_receiver)
 
@@ -77,22 +53,21 @@ sy_process(_name), iport1("iport1"), oport1("oport1"), topic_name_sender(topic_n
 
     std::string forsyde_kind() const {return "SY::roswrap";}
 
+
 private:
 
 std::string topic_name_sender;
 std::string topic_name_receiver;
 std::string _name;
 abst_ext<T1>* ival1;
-
 T0* oval;
 std::istringstream ival1_str;
 std::istringstream ival2_str;
 
-ros::Publisher chatter_pub; // Publish in Prep Step
+ros::Publisher pub;          // Publish in Prep Step
 ros::Subscriber sub;        // Subscribe in Prod Step 
-
-//ros::Subscriber sub = n.subscribe("receive", 1000, chatterCallback);
-   
+//ros::NodeHandle n;         //  Node Handle 
+  
     void init()
     {
       
@@ -100,66 +75,32 @@ ros::Subscriber sub;        // Subscribe in Prod Step
       ival1 = new abst_ext<T1>;
 		  ros::init(argc, argv, "forsyde");
       ros::start();
-      ival1_str.str(topic_name_sender);
-      ival2_str.str(topic_name_receiver);
-      ros::NodeHandle n;
-      sub = n.subscribe ("/sonar_sonar_link_1", 1000, Callback_Sonar);
-  
-      //chatter_pub = n.advertise<std_msgs::String>(ival1_str.str(), 1000);
+      // ival1_str.str(topic_name_sender);
+      // ival2_str.str(topic_name_receiver);
 
-      //chatter_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1000); turtle1/cmd_vel
-      //chatter_pub = n.advertise<std_msgs::Float64>("robot/left_joint_velocity_controller/command", 1000);   
-    
+      ros::NodeHandle n;
+
+      //sub = n.subscribe ("/sonar_sonar_link_1", 1000,[](const sensor_msgs::Range::ConstPtr& msg) { double range = msg->range; } );
+      //auto Callback_Sonar = [](const sensor_msgs::Range::ConstPtr& msg) {};
+
+      sub = n.subscribe ("/sonar_sonar_link_1", 1000, Callback_Sonar);
+      //sub = n.subscribe ("/sonar_sonar_link_2", 1000, Callback_Sonar);
+      //sub = n.subscribe ("/sonar_sonar_link_3", 1000, Callback_Sonar);
+
+      pub = n.advertise <std_msgs::Float64> ("robot/left_joint_velocity_controller/command", 1000);
+      //pub = n.advertise <std_msgs::Float64> ("robot/right_joint_velocity_controller/command", 1000); 
+      //pub = n.advertise <std_msgs::Float64> ("robot/left2_joint_velocity_controller/command", 1000); 
+
     }
     
     void prep()
     {
 
-
-      ros::Rate loop_rate(1);
-      *ival1 = iport1.read(); // Read input 
-      //std_msgs::String msg; 
-      std::stringstream ss;
-      //ros::NodeHandle n;
-
-      //ss << *ival1;
-      //ss << "/cmd_vel geometry_msgs/Twist linear: '[10, 0, 0]' '[0, 0, 5]'"; 
-
-      //msg.data = ss.str(); 
-      //ROS_INFO("%s", msg.data.c_str());
-    
-      //geometry_msgs::Twist msg; 
-      //std_msgs::Float64 msg1 ;
-      // msg.linear.x = 0.2;
-      // msg.linear.y = 0;
-	    // msg.linear.z = 0;
-      // msg1.data = 5.0;
-      //msg.angular.z = 5;
-      int flag = 1;
-    
-      //message_filters::Subscriber<sensor_msgs::Image> sub_1_;
-      //message_filters::Subscriber<sensor_msgs::Image> sub_2_;
-
- 
-      
-      //sub = n.subscribe ("/robot/joint_states", 1000, Callback_Jonit);
-      //chatter_pub.publish(msg1);
-      ros::spin();
-
-      loop_rate.sleep();
-    
-      //wait(SC_ZERO_TIME);
-
-
-     
-
-      
-      
-      
-     
-      //std::cout<<"Exit";
-      
-    
+      *ival1 = iport1.read();
+      std_msgs::Float64 msg ;
+      msg.data = ival1->from_abst_ext(0.0);
+      pub.publish(msg);
+      ros::spinOnce(); 
       
     }
     
@@ -168,11 +109,18 @@ ros::Subscriber sub;        // Subscribe in Prod Step
     void prod()
     {
 
-      //ros::NodeHandle n;
-      //sub = n.subscribe(ival2_str.str(), 1000, chatterCallback);
-      //ROS_INFO("%s", msg.data.c_str());
-      //std::cout<<ival2_str.str()<<"\n";
-      //WRITE_MULTIPORT(oport1, abst_ext<T0>(*oval))
+      while (oval->is_absent())
+
+      {
+        
+        ros::spinOnce(); 
+        wait(SC_ZERO_TIME);
+
+      }
+
+      WRITE_MULTIPORT(oport1, abst_ext<T0>(*oval))
+      oval->set_asbt();
+
     }
     
     void clean()
@@ -181,6 +129,8 @@ ros::Subscriber sub;        // Subscribe in Prod Step
       delete oval;
       ros::shutdown();
     }
+
+
     
 };
 
@@ -210,15 +160,3 @@ inline roswrap<T0,T1>* make_roswrap(const std::string& pName,
 }
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
