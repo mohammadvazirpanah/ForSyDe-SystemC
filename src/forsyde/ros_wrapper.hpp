@@ -109,17 +109,17 @@ ros::Subscriber sub;        // Subscribe in Prod Step
     void prod()
     {
 
-      while (oval->is_absent())
+      // while (oval->is_absent())
 
-      {
+      // {
         
-        ros::spinOnce(); 
-        wait(SC_ZERO_TIME);
+      //   ros::spinOnce(); 
+      //   wait(SC_ZERO_TIME);
 
-      }
+      // }
 
-      WRITE_MULTIPORT(oport1, abst_ext<T0>(*oval))
-      oval->set_asbt();
+      // WRITE_MULTIPORT(oport1, abst_ext<T0>(*oval))
+      // oval->set_asbt();
 
     }
     
