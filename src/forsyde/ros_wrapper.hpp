@@ -13,13 +13,7 @@
 #include <stdio.h>
 
 
-void Callback_Sonar(const sensor_msgs::Range::ConstPtr& msg)
-{
-  double max_range = msg-> max_range ;
-  double min_range = msg-> min_range ;
-  double range = msg->range ; 
-  //ROS_INFO("Sonar Range: [%f]", msg->range);
-}
+
 
 namespace ForSyDe
 {
@@ -39,9 +33,6 @@ public:
     int argc;
     char **argv; 
 
-
-
-
 roswrap(const sc_module_name& _name, const std::string& topic_name_sender, const std::string& topic_name_receiver) : 
 sy_process(_name), iport1("iport1"), oport1("oport1"), topic_name_sender(topic_name_sender), topic_name_receiver(topic_name_receiver)
 
@@ -54,13 +45,23 @@ sy_process(_name), iport1("iport1"), oport1("oport1"), topic_name_sender(topic_n
     std::string forsyde_kind() const {return "SY::roswrap";}
 
 
+void Callback_Sonar(const sensor_msgs::Range::ConstPtr& msg)
+{
+  double max_range = msg-> max_range ;
+  double min_range = msg-> min_range ;
+  double range = msg->range ; 
+  oval->set_val(range);
+  //ROS_INFO("Sonar Range: [%f]", msg->range);
+}
+
 private:
 
 std::string topic_name_sender;
 std::string topic_name_receiver;
 std::string _name;
 abst_ext<T1>* ival1;
-T0* oval;
+abst_ext<T0>* oval;
+//T0* oval;
 std::istringstream ival1_str;
 std::istringstream ival2_str;
 
@@ -71,7 +72,7 @@ ros::Subscriber sub;        // Subscribe in Prod Step
     void init()
     {
       
-      oval = new T0;
+      oval = new abst_ext<T0>;
       ival1 = new abst_ext<T1>;
 		  ros::init(argc, argv, "forsyde");
       ros::start();
@@ -83,7 +84,7 @@ ros::Subscriber sub;        // Subscribe in Prod Step
       //sub = n.subscribe ("/sonar_sonar_link_1", 1000,[](const sensor_msgs::Range::ConstPtr& msg) { double range = msg->range; } );
       //auto Callback_Sonar = [](const sensor_msgs::Range::ConstPtr& msg) {};
 
-      sub = n.subscribe ("/sonar_sonar_link_1", 1000, Callback_Sonar);
+      sub = n.subscribe ("/sonar_sonar_link_1", 1000, &roswrap::Callback_Sonar, this);
       //sub = n.subscribe ("/sonar_sonar_link_2", 1000, Callback_Sonar);
       //sub = n.subscribe ("/sonar_sonar_link_3", 1000, Callback_Sonar);
 
@@ -109,17 +110,17 @@ ros::Subscriber sub;        // Subscribe in Prod Step
     void prod()
     {
 
-      // while (oval->is_absent())
+      while (oval->is_absent())
 
-      // {
+      {
         
-      //   ros::spinOnce(); 
-      //   wait(SC_ZERO_TIME);
+        ros::spinOnce(); 
+        wait(SC_ZERO_TIME);
 
-      // }
+      }
 
-      // WRITE_MULTIPORT(oport1, abst_ext<T0>(*oval))
-      // oval->set_asbt();
+      WRITE_MULTIPORT(oport1, abst_ext<T0>(*oval))
+      oval->set_abst();
 
     }
     
