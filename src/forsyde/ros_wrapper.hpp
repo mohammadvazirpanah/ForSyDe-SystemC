@@ -58,7 +58,7 @@ std::istringstream ival2_str;
 
 ros::Publisher pub;          // Publish in Prep Step
 ros::Subscriber sub;        // Subscribe in Prod Step 
-ros::NodeHandle *n;         //  Node Handle 
+ros::NodeHandle *n;         //  Node Handle For Ros Environment 
 
 
     void Callback_Sonar(const sensor_msgs::Range::ConstPtr& msg)
@@ -66,7 +66,7 @@ ros::NodeHandle *n;         //  Node Handle
       float max_range = msg-> max_range ;
       float min_range = msg-> min_range ;
       float range = msg->range ; 
-      oval->set_val(msg->range);
+      oval->set_val(msg->min_range);
       ROS_INFO("Sonar Range: [%f]", oval->from_abst_ext(0.0));
     }
   
@@ -77,12 +77,11 @@ ros::NodeHandle *n;         //  Node Handle
       ival1 = new abst_ext<T1>;
 		  ros::init(argc, argv, "forsyde");
       ros::start();
+      n = new ros::NodeHandle;
       // ival1_str.str(topic_name_sender);
       // ival2_str.str(topic_name_receiver);
-      n = new ros::NodeHandle;
+      
 
-      //sub = n.subscribe ("/sonar_sonar_link_1", 1000,[](const sensor_msgs::Range::ConstPtr& msg) { double range = msg->range; } );
-      //auto Callback_Sonar = [](const sensor_msgs::Range::ConstPtr& msg) {};
 
       sub = n->subscribe ("/sonar_sonar_link_1", 1000, &roswrap::Callback_Sonar, this);
       //sub = n.subscribe ("/sonar_sonar_link_2", 1000, Callback_Sonar);
@@ -112,16 +111,13 @@ ros::NodeHandle *n;         //  Node Handle
     void prod()
     {
       
-      ros::Rate rate(10);
+      ros::Rate rate(1);
       while (oval->is_absent())
 
       {
-        
-        std::cout<<"Oval is:"<<oval->from_abst_ext(0.0)<<"\n";
         ros::spinOnce(); 
         rate.sleep();
         wait(SC_ZERO_TIME);
-
       }
 
       WRITE_MULTIPORT(oport1, abst_ext<T0>(*oval))

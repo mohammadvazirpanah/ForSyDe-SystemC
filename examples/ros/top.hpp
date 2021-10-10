@@ -7,7 +7,7 @@ using namespace ForSyDe;
 
 SC_MODULE(top)
 {
-   //SY::signal<double> srca, srcb, outa, outb, outc, outd;
+    
     SY::signal<float> srca, srcb, outa, outb, outc, outd;
     SC_CTOR(top)
     {
