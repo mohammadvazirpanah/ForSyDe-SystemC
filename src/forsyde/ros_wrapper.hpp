@@ -45,15 +45,6 @@ sy_process(_name), iport1("iport1"), oport1("oport1"), topic_name_sender(topic_n
     std::string forsyde_kind() const {return "SY::roswrap";}
 
 
-void Callback_Sonar(const sensor_msgs::Range::ConstPtr& msg)
-{
-  double max_range = msg-> max_range ;
-  double min_range = msg-> min_range ;
-  double range = msg->range ; 
-  oval->set_val(range);
-  //ROS_INFO("Sonar Range: [%f]", msg->range);
-}
-
 private:
 
 std::string topic_name_sender;
@@ -67,28 +58,37 @@ std::istringstream ival2_str;
 
 ros::Publisher pub;          // Publish in Prep Step
 ros::Subscriber sub;        // Subscribe in Prod Step 
-//ros::NodeHandle n;         //  Node Handle 
+ros::NodeHandle *n;         //  Node Handle 
+
+
+    void Callback_Sonar(const sensor_msgs::Range::ConstPtr& msg)
+    {
+      float max_range = msg-> max_range ;
+      float min_range = msg-> min_range ;
+      float range = msg->range ; 
+      oval->set_val(msg->range);
+      ROS_INFO("Sonar Range: [%f]", oval->from_abst_ext(0.0));
+    }
   
     void init()
     {
-      
+
       oval = new abst_ext<T0>;
       ival1 = new abst_ext<T1>;
 		  ros::init(argc, argv, "forsyde");
       ros::start();
       // ival1_str.str(topic_name_sender);
       // ival2_str.str(topic_name_receiver);
-
-      ros::NodeHandle n;
+      n = new ros::NodeHandle;
 
       //sub = n.subscribe ("/sonar_sonar_link_1", 1000,[](const sensor_msgs::Range::ConstPtr& msg) { double range = msg->range; } );
       //auto Callback_Sonar = [](const sensor_msgs::Range::ConstPtr& msg) {};
 
-      sub = n.subscribe ("/sonar_sonar_link_1", 1000, &roswrap::Callback_Sonar, this);
+      sub = n->subscribe ("/sonar_sonar_link_1", 1000, &roswrap::Callback_Sonar, this);
       //sub = n.subscribe ("/sonar_sonar_link_2", 1000, Callback_Sonar);
       //sub = n.subscribe ("/sonar_sonar_link_3", 1000, Callback_Sonar);
 
-      pub = n.advertise <std_msgs::Float64> ("robot/left_joint_velocity_controller/command", 1000);
+      pub = n->advertise <std_msgs::Float64> ("robot/left_joint_velocity_controller/command", 1000);
       //pub = n.advertise <std_msgs::Float64> ("robot/right_joint_velocity_controller/command", 1000); 
       //pub = n.advertise <std_msgs::Float64> ("robot/left2_joint_velocity_controller/command", 1000); 
 
@@ -97,11 +97,13 @@ ros::Subscriber sub;        // Subscribe in Prod Step
     void prep()
     {
 
+      
       *ival1 = iport1.read();
       std_msgs::Float64 msg ;
       msg.data = ival1->from_abst_ext(0.0);
       pub.publish(msg);
       ros::spinOnce(); 
+  
       
     }
     
@@ -109,12 +111,15 @@ ros::Subscriber sub;        // Subscribe in Prod Step
     
     void prod()
     {
-
+      
+      ros::Rate rate(10);
       while (oval->is_absent())
 
       {
         
+        std::cout<<"Oval is:"<<oval->from_abst_ext(0.0)<<"\n";
         ros::spinOnce(); 
+        rate.sleep();
         wait(SC_ZERO_TIME);
 
       }
@@ -128,6 +133,7 @@ ros::Subscriber sub;        // Subscribe in Prod Step
     {
       delete ival1;
       delete oval;
+      delete n;
       ros::shutdown();
     }
 
