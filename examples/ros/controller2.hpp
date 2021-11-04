@@ -9,7 +9,7 @@ using namespace sc_core;
 using namespace ForSyDe;
 
 
-void controller_ns_func(const int& ns,
+void controller_ns_func(int& ns,
                         const int& cs,
                         const std::array<abst_ext<double>,6>& inp)
 {
@@ -43,6 +43,7 @@ void controller_ns_func(const int& ns,
             if (fmod(abs(desired_angle-current_angle),2*pi) < rot_pos_margin)
             {
                 state = 2;
+                ns = state;
             }   
             break;
             
@@ -54,6 +55,7 @@ void controller_ns_func(const int& ns,
                 double destination_grad = destination_y/destination_x;
                 double current_grad = current_y/current_x;
                 state = 3;
+                ns = state;
             }
             break;
 
@@ -63,16 +65,19 @@ void controller_ns_func(const int& ns,
 
             if (move_around==1 && abs(current_grad-destination_grad)<0.01)
                 state = 1;
+                ns = state;
             if (0.2*sonar_margin<sonar_margin-right_sonar)
             {   
                 last_right_sonar = right_sonar;
                 state = 4;
+                ns = state;
             }
 
             if (right_sonar-sonar_margin>0.1*sonar_margin)
             {
                 last_right_sonar = right_sonar;
                 state = 5;
+                ns = state;
             }
             break;
 
@@ -82,6 +87,7 @@ void controller_ns_func(const int& ns,
             if (right_sonar<last_right_sonar || right_sonar > 0.8* sonar_margin)
             {
                 state = 3;
+                ns = state;
             }
             break;
 
@@ -89,6 +95,7 @@ void controller_ns_func(const int& ns,
             move_around = 1;
             // after 600 Ms 
             state = 6;
+            ns = state;
             break;
 
         case 6:
@@ -97,9 +104,10 @@ void controller_ns_func(const int& ns,
             if (right_sonar<last_right_sonar || right_sonar < sonar_margin || right_sonar == max_sonar)
             {
                 state = 3;
+                ns = state;
             }  
             break;   
-
+     
 } 
 
 
@@ -108,7 +116,7 @@ void controller_ns_func(const int& ns,
 
 void controller_od_func(std::array<abst_ext<double>,3> &out,
                         const int& cs,
-                        std::array<abst_ext<double>,6> &inp)
+                        const std::array<abst_ext<double>,6> &inp)
 {
 
     double w_out = 0, x_out = 0, y_out = 0 ;

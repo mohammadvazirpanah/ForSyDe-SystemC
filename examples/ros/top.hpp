@@ -158,6 +158,12 @@ SC_MODULE(top)
         wrapper_unzip -> oport[2](to_wrapper3);
     }
 
-
+    #ifdef FORSYDE_INTROSPECTION
+        void start_of_simulation()
+        {
+            ForSyDe::XMLExport dumper("gen/");
+            dumper.traverse(this);
+        }
+    #endif
 };
 

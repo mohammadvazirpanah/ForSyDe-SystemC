@@ -48,7 +48,7 @@ public:
 
     {
 #ifdef FORSYDE_INTROSPECTION
-        arg_vec.push_back(std::make_tuple("topic_name",topics_publisher, topics_subscriber));
+        //arg_vec.push_back(std::make_tuple("topic_name",topics_publisher, topics_subscriber));
 #endif
     }
 
@@ -197,7 +197,24 @@ ros::Rate *rate;            // Ros Rate
       delete rate;
       ros::shutdown();
     }
-    
+
+    #ifdef FORSYDE_INTROSPECTION
+    void bindInfo()
+    {
+        boundInChans.resize(3);     
+        boundInChans[0].port = &iport1;
+        boundInChans[1].port = &iport2;
+        boundInChans[2].port = &iport3;
+        boundOutChans.resize(6);    
+        boundOutChans[0].port = &oport1;
+        boundOutChans[1].port = &oport2;
+        boundOutChans[2].port = &oport3;
+        boundOutChans[3].port = &oport4;
+        boundOutChans[4].port = &oport5;
+        boundOutChans[5].port = &oport6;
+
+    }
+    #endif
 };
 
 
