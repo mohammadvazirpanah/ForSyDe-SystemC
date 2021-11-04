@@ -7,15 +7,6 @@
 
 using namespace ForSyDe;
 
-const double rot_pos_margin = 0.01;
-const double rot_vel_gain = 2;
-const double lin_vel_gain = 4;
-const double sonar_margin = 0.7;
-const double max_sonar = 1.4;
-const double desired_angle = func(-10,5.7735026919) ; // destination_x , destination_y 
-const double destination_x = -10;
-const double destination_y = 5.7735026919;
-const double current_angle = 5;
 
 float func(float inp1, float inp2) 
 {
@@ -41,6 +32,18 @@ float func(float inp1, float inp2)
 
     return out1;
 }
+
+
+const double rot_pos_margin = 0.01;
+const double rot_vel_gain = 2;
+const double lin_vel_gain = 4;
+const double sonar_margin = 0.7;
+const double max_sonar = 1.4;
+const double desired_angle = func(-10,5.7735026919) ; // destination_x , destination_y 
+const double destination_x = -10;
+const double destination_y = 5.7735026919;
+const double current_angle = 5;
+
 
 
 #endif

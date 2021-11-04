@@ -40,9 +40,15 @@ void inv_kinematics_func (std::array<abst_ext<double>,3>& joint_state, const dou
     last_in_y = y_pos;
     angle_radian = ((2 *3.14159265359 * angular_pos) / (50.84)) + (3.14159265359/3.0) ;      
 
-    joint_state [0] = cur_y; //transformed_y
-    joint_state [1] = cur_x; //transformed_x
-    joint_state [2] = angle_radian; 
+    
+    set_val (joint_state [0],cur_y);
+    set_val (joint_state [1],cur_x);
+    set_val (joint_state [2],angle_radian);
+
+
+    // joint_state [0] = cur_y; //transformed_y
+    // joint_state [1] = cur_x; //transformed_x
+    // joint_state [2] = angle_radian; 
 
 }
 
@@ -51,18 +57,21 @@ void kinematics_func(std::array<abst_ext<double>,3> &out, const std::array<abst_
     double w, vx, vy;
     double right_speed, left_speed, left2_speed; 
 
-    w = in [0];
-    vx = in [1];
-    vy = in [2];
+    w  = from_abst_ext(in[0],0.0);
+    vx = from_abst_ext(in[1],0.0);
+    vy = from_abst_ext(in[2],0.0);
 
     right_speed = w * (-1) + vx * (-0.5) + vy * (-0.86602); 
     left_speed  = (w * (-1) + vx ) * (-1);
     left2_speed = w * (-1) + vx * (-0.5) + vy * (0.86602);
 
-    out [0] = right_speed; 
-    out [1] = left_speed;    
-    out [2] = left2_speed;    
+    set_val (out [0],right_speed);
+    set_val (out [1],left_speed);
+    set_val (out [2],left2_speed);
 
+    // out [0] = right_speed; 
+    // out [1] = left_speed;    
+    // out [2] = left2_speed;    
 }
 
 SC_MODULE(top)
@@ -132,7 +141,7 @@ SC_MODULE(top)
         SY::make_smealy("controller1",
                         controller_ns_func,
                         controller_od_func,
-                        std::make_tuple(0.0, 0.0, 0.0),  
+                        0,
                         from_mealy,
                         to_mealy
                         );

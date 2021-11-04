@@ -60,8 +60,8 @@ private:
 std::vector <std::string> topics_publisher;
 std::vector <std::string> topics_subscriber;
 std::string _name;
-abst_ext<T1>* ival1, ival2, ival3;
-abst_ext<T0>* oval1, oval2, oval3, oval4, oval5, oval6;  //  transformed_y, transformed_x, angle_radian, sonar range_1, sonar range_2, sonar range_3
+abst_ext<T1> *ival1, *ival2, *ival3;
+abst_ext<T0> *oval1, *oval2, *oval3, *oval4, *oval5, *oval6;  //  transformed_y, transformed_x, angle_radian, sonar range_1, sonar range_2, sonar range_3
 
 abst_ext<T0>* rosval1;
 abst_ext<T0>* rosval2;
@@ -106,7 +106,6 @@ ros::Rate *rate;            // Ros Rate
     void init()
     {
 
- 
       ival1 = new abst_ext<T1>;
       ival2 = new abst_ext<T1>;
       ival3 = new abst_ext<T1>;
@@ -168,12 +167,12 @@ ros::Rate *rate;            // Ros Rate
         wait(SC_ZERO_TIME);
       }
       
-      WRITE_MULTIPORT(oport1, oval1)
-      WRITE_MULTIPORT(oport2, oval2)
-      WRITE_MULTIPORT(oport3, oval3)
-      WRITE_MULTIPORT(oport4, oval4)
-      WRITE_MULTIPORT(oport5, oval5)
-      WRITE_MULTIPORT(oport6, oval6)
+      WRITE_MULTIPORT(oport1, *oval1)
+      WRITE_MULTIPORT(oport2, *oval2)
+      WRITE_MULTIPORT(oport3, *oval3)
+      WRITE_MULTIPORT(oport4, *oval4)
+      WRITE_MULTIPORT(oport5, *oval5)
+      WRITE_MULTIPORT(oport6, *oval6)
 
       oval1->set_abst();
       oval2->set_abst();
@@ -185,8 +184,15 @@ ros::Rate *rate;            // Ros Rate
     
     void clean()
     {
-      delete ival1, ival2, ival3;
-      delete oval1, oval2, oval3, oval4, oval5, oval6;
+      delete ival1; 
+      delete ival2; 
+      delete ival3;
+      delete oval1;
+      delete oval2; 
+      delete oval3;
+      delete oval4;
+      delete oval5;
+      delete oval6;
       delete n;
       delete rate;
       ros::shutdown();
