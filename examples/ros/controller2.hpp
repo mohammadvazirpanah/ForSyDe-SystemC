@@ -40,6 +40,7 @@ void controller_ns_func(int& ns,
     switch (state)
     {
         case 1:  
+
             if (fmod(abs(desired_angle-current_angle),2*pi) < rot_pos_margin)
             {
                 state = 2;
@@ -64,16 +65,18 @@ void controller_ns_func(int& ns,
             current_grad = current_y/current_x;
 
             if (move_around==1 && abs(current_grad-destination_grad)<0.01)
+            {
                 state = 1;
                 ns = state;
-            if (0.2*sonar_margin<sonar_margin-right_sonar)
+            }
+            else if (0.2*sonar_margin<sonar_margin-right_sonar)
             {   
                 last_right_sonar = right_sonar;
                 state = 4;
                 ns = state;
             }
 
-            if (right_sonar-sonar_margin>0.1*sonar_margin)
+            else if (right_sonar-sonar_margin>0.1*sonar_margin)
             {
                 last_right_sonar = right_sonar;
                 state = 5;
@@ -93,7 +96,7 @@ void controller_ns_func(int& ns,
 
         case 5:  
             move_around = 1;
-            // after 600 Ms 
+            wait(600,SC_MS);
             state = 6;
             ns = state;
             break;
@@ -107,7 +110,9 @@ void controller_ns_func(int& ns,
                 ns = state;
             }  
             break;   
-     
+        default:
+            state = 1;
+            ns = state;
 } 
 
 
@@ -131,8 +136,8 @@ void controller_od_func(std::array<abst_ext<double>,3> &out,
             set_val (out [0],w_out);
             set_val (out [1],x_out);
             set_val (out [2],y_out);
-            //out = std::make_tuple(x_out, y_out, w_out);
             break;
+
         case 2:
             w_out = 0;
             x_out = -1*lin_vel_gain*cos(pi/3);
@@ -140,8 +145,8 @@ void controller_od_func(std::array<abst_ext<double>,3> &out,
             set_val (out [0],w_out);
             set_val (out [1],x_out);
             set_val (out [2],y_out);
-            //out = std::make_tuple(x_out, y_out, w_out);
             break;
+
         case 3:  
             w_out = 0;
             x_out = -1*lin_vel_gain*sin(pi/3);
@@ -149,8 +154,8 @@ void controller_od_func(std::array<abst_ext<double>,3> &out,
             set_val (out [0],w_out);
             set_val (out [1],x_out);
             set_val (out [2],y_out);
-            //out = std::make_tuple(x_out, y_out, w_out);
             break;
+           
         case 4:  
             w_out = rot_vel_gain*(-1);
             x_out = 0;
@@ -158,8 +163,8 @@ void controller_od_func(std::array<abst_ext<double>,3> &out,
             set_val (out [0],w_out);
             set_val (out [1],x_out);
             set_val (out [2],y_out);
-            //out = std::make_tuple(x_out, y_out, w_out);
             break;
+
         case 5:  
             w_out = 0;
             x_out = -0.7*lin_vel_gain*cos(pi/6);
@@ -167,8 +172,8 @@ void controller_od_func(std::array<abst_ext<double>,3> &out,
             set_val (out [0],w_out);
             set_val (out [1],x_out);
             set_val (out [2],y_out);
-            //out = std::make_tuple(x_out, y_out, w_out);
             break;
+
         case 6:  
             w_out = rot_vel_gain*(1);
             x_out = 0;
@@ -176,8 +181,8 @@ void controller_od_func(std::array<abst_ext<double>,3> &out,
             set_val (out [0],w_out);
             set_val (out [1],x_out);
             set_val (out [2],y_out);
-            //out = std::make_tuple(x_out, y_out, w_out);
             break;
+
         default:
             w_out = 0;
             x_out = 0;
@@ -185,7 +190,7 @@ void controller_od_func(std::array<abst_ext<double>,3> &out,
             set_val (out [0],w_out);
             set_val (out [1],x_out);
             set_val (out [2],y_out);
-            //out = std::make_tuple(x_out, y_out, w_out);
+           
 } 
 
 }

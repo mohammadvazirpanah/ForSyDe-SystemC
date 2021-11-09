@@ -4,46 +4,51 @@
 #include <controller2.hpp>
 #include "sensor_msgs/Range.h"
 #include <math.h>
+#include <limits.h>
 
 using namespace sc_core;
 using namespace ForSyDe;
 
-void inv_kinematics_func (std::array<abst_ext<double>,3>& joint_state, const double& x, const double& y, const double& angular)
+void inv_kinematics_func (std::array<abst_ext<double>,3>& joint_state, const double& x, const double& y, const double& z)
 {
     double x_pos, y_pos, angular_pos, in_angular_pos;
-    double cur_x, cur_y, last_in_y, last_in_x, added_y, added_x, angle_radian;
-    
-    // double left_pos, left2_pos, right_pos;
-    // left_pos  = x;
-    // left2_pos = y;
-    // right_pos = angular;
-    
-    angular_pos   =  ((-1.0)*(1.0/3.0) * (y)) + ((-1.0)*(1.0/3.0) * (angular)) + ((-1.0)*(1.0/3.0) * (x));
-    x_pos         =  ((2.0/3.0) * (y)) + ((-1.0)*(1.0/3.0) * (angular)) + ((-1.0)*(1.0/3.0) * (x)); 
-    y_pos         =  ( 0.0 * y) + ((-1.0)*(0.57735026919) * (angular)) + (0.57735026919 * (x));
+    double added_y, added_x, curr_angle;
+    double *cur_x, *cur_y, *last_in_y, *last_in_x;
+    //cur_x = INT_MIN;
+    cur_x = new double;
+    cur_y = new double;
+    last_in_y = new double;
+    last_in_x = new double; 
+    // left2_pos  = x;
+    // left_pos = y;
+    // right_pos = z;
+    angular_pos   =  ((-1.0/3.0) * (y)) + ((-1.0/3.0) * (z)) + ((-1.0/3.0) * (x));
+    x_pos         =  ((2.0/3.0) * (y)) + ((-1.0/3.0) * (z)) + ((-1.0/3.0) * (x)); 
+    y_pos         =  ( 0.0 * y) + ((-0.57735026919) * (z)) + (0.57735026919 * (x));
+
 
     in_angular_pos = ((2 *3.14159265359 * angular_pos) / (50.84)) ; 
 
-    if(cur_x == 0)
+    if(cur_x)
     {
-        cur_x = 0.0;
-        cur_y = 0.0;
-        last_in_x = 0.0;
-        last_in_y = 0.0;
+        *cur_x = 0.0;
+        *cur_y = 0.0;
+        *last_in_x = 0.0;
+        *last_in_y = 0.0;
     }
 
-    added_y = (y_pos - last_in_y) * cos((-1)*in_angular_pos) + (x_pos - last_in_x) * sin((-1)*in_angular_pos);
-    added_x = -1*(y_pos - last_in_y) * sin(-in_angular_pos) + (x_pos - last_in_x) * cos((-1)*in_angular_pos);
-    cur_x = cur_x + added_x;
-    cur_y = cur_y + added_y;
-    last_in_x = x_pos;
-    last_in_y = y_pos;
-    angle_radian = ((2 *3.14159265359 * angular_pos) / (50.84)) + (3.14159265359/3.0) ;      
+    added_y = (y_pos - *last_in_y) * cos((-1)*in_angular_pos) + (x_pos - *last_in_x) * sin((-1)*in_angular_pos);
+    added_x = -1*(y_pos - *last_in_y) * sin(-in_angular_pos) + (x_pos - *last_in_x) * cos((-1)*in_angular_pos);
+    *cur_x = *cur_x + added_x;
+    *cur_y = *cur_y + added_y;
+    *last_in_x = x_pos;
+    *last_in_y = y_pos;
+    curr_angle = ((2 *3.14159265359 * angular_pos) / (50.84)) + (3.14159265359/3.0) ;      
 
     
-    set_val (joint_state [0],cur_y);
-    set_val (joint_state [1],cur_x);
-    set_val (joint_state [2],angle_radian);
+    set_val (joint_state [0],*cur_y);
+    set_val (joint_state [1],*cur_x);
+    set_val (joint_state [2],curr_angle);
 
 
     // joint_state [0] = cur_y; //transformed_y
@@ -61,9 +66,9 @@ void kinematics_func(std::array<abst_ext<double>,3> &out, const std::array<abst_
     vx = from_abst_ext(in[1],0.0);
     vy = from_abst_ext(in[2],0.0);
 
-    right_speed = w * (-1) + vx * (-0.5) + vy * (-0.86602); 
+    right_speed = (w * (-1)) + (vx * (-0.5)) + (vy * (-0.86602)); 
     left_speed  = (w * (-1) + vx ) * (-1);
-    left2_speed = w * (-1) + vx * (-0.5) + vy * (0.86602);
+    left2_speed = (w * (-1)) + (vx * (-0.5)) + (vy * (0.86602));
 
     set_val (out [0],right_speed);
     set_val (out [1],left_speed);
@@ -88,9 +93,10 @@ SC_MODULE(top)
 
     std::vector <std::string> topics_publisher=  
     {
-        "robot/left_joint_velocity_controller/command",
-        "robot/right_joint_velocity_controller/command",
-        "robot/left2_joint_velocity_controller/command"
+        "/robot/left_joint_velocity_controller/command",
+        "/robot/right_joint_velocity_controller/command",
+        "/robot/left2_joint_velocity_controller/command"
+        
     }; 
 
     std::vector <std::string> topics_subscriber= 
@@ -141,7 +147,7 @@ SC_MODULE(top)
         SY::make_smealy("controller1",
                         controller_ns_func,
                         controller_od_func,
-                        0,
+                        1,
                         from_mealy,
                         to_mealy
                         );
