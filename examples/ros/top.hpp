@@ -13,12 +13,8 @@ void inv_kinematics_func (std::array<abst_ext<double>,3>& joint_state, const dou
 {
     double x_pos, y_pos, angular_pos, in_angular_pos;
     double added_y, added_x, curr_angle;
-    double *cur_x, *cur_y, *last_in_y, *last_in_x;
-    //cur_x = INT_MIN;
-    cur_x = new double;
-    cur_y = new double;
-    last_in_y = new double;
-    last_in_x = new double; 
+    static double cur_x, cur_y, last_in_y, last_in_x;
+    
     // left2_pos  = x;
     // left_pos = y;
     // right_pos = z;
@@ -28,32 +24,28 @@ void inv_kinematics_func (std::array<abst_ext<double>,3>& joint_state, const dou
 
 
     in_angular_pos = ((2 *3.14159265359 * angular_pos) / (50.84)) ; 
+    curr_angle = in_angular_pos + (3.14159265359/3.0) ; 
 
-    if(cur_x)
+    if (cur_x)
     {
-        *cur_x = 0.0;
-        *cur_y = 0.0;
-        *last_in_x = 0.0;
-        *last_in_y = 0.0;
+        cur_x = 0.0;
+        cur_y = 0.0;
+        last_in_x = 0.0;
+        last_in_y = 0.0;
     }
 
-    added_y = (y_pos - *last_in_y) * cos((-1)*in_angular_pos) + (x_pos - *last_in_x) * sin((-1)*in_angular_pos);
-    added_x = -1*(y_pos - *last_in_y) * sin(-in_angular_pos) + (x_pos - *last_in_x) * cos((-1)*in_angular_pos);
-    *cur_x = *cur_x + added_x;
-    *cur_y = *cur_y + added_y;
-    *last_in_x = x_pos;
-    *last_in_y = y_pos;
-    curr_angle = ((2 *3.14159265359 * angular_pos) / (50.84)) + (3.14159265359/3.0) ;      
+    added_y = (y_pos - last_in_y) * cos(-in_angular_pos) + (x_pos - last_in_x) * sin(-in_angular_pos);
+    added_x = (-1)*(y_pos - last_in_y) * sin(-in_angular_pos) + (x_pos - last_in_x) * cos(-in_angular_pos);
+    cur_x = cur_x + added_x;
+    cur_y = cur_y + added_y;
+    last_in_x = x_pos;
+    last_in_y = y_pos;
+         
 
     
-    set_val (joint_state [0],*cur_y);
-    set_val (joint_state [1],*cur_x);
+    set_val (joint_state [0],cur_y);
+    set_val (joint_state [1],cur_x);
     set_val (joint_state [2],curr_angle);
-
-
-    // joint_state [0] = cur_y; //transformed_y
-    // joint_state [1] = cur_x; //transformed_x
-    // joint_state [2] = angle_radian; 
 
 }
 
@@ -66,17 +58,15 @@ void kinematics_func(std::array<abst_ext<double>,3> &out, const std::array<abst_
     vx = from_abst_ext(in[1],0.0);
     vy = from_abst_ext(in[2],0.0);
 
-    right_speed = (w * (-1)) + (vx * (-0.5)) + (vy * (-0.86602)); 
     left_speed  = (w * (-1) + vx ) * (-1);
+    right_speed = (w * (-1)) + (vx * (-0.5)) + (vy * (-0.86602)); 
     left2_speed = (w * (-1)) + (vx * (-0.5)) + (vy * (0.86602));
 
-    set_val (out [0],right_speed);
-    set_val (out [1],left_speed);
+    set_val (out [0],left_speed);
+    set_val (out [1],right_speed);
     set_val (out [2],left2_speed);
 
-    // out [0] = right_speed; 
-    // out [1] = left_speed;    
-    // out [2] = left2_speed;    
+ 
 }
 
 SC_MODULE(top)
@@ -147,7 +137,7 @@ SC_MODULE(top)
         SY::make_smealy("controller1",
                         controller_ns_func,
                         controller_od_func,
-                        1,
+                        std::make_tuple(0.0,0.0,0.0,0,0),
                         from_mealy,
                         to_mealy
                         );

@@ -75,12 +75,12 @@ bool first_run;
 ros::Publisher pub1, pub2, pub3;          // Publish in Prep Step
 ros::Subscriber sub1,sub2,sub3,sub4;      // Subscribe in Prod Step 
 ros::NodeHandle *n;                       // Node Handle For Ros Environment 
-ros::NodeHandle *n1;
-ros::NodeHandle *n2;
-ros::NodeHandle *n3;
-ros::NodeHandle *n4;
-ros::NodeHandle *n5;
-ros::NodeHandle *n6;
+// ros::NodeHandle *n1;
+// ros::NodeHandle *n2;
+// ros::NodeHandle *n3;
+// ros::NodeHandle *n4;
+// ros::NodeHandle *n5;
+// ros::NodeHandle *n6;
 
 
 ros::Rate *rate;                          // Ros Rate 
@@ -128,24 +128,24 @@ ros::Rate *rate;                          // Ros Rate
 		  ros::init(argc, argv, "forsyde");
       ros::start();
       n = new ros::NodeHandle;
-      n1 = new ros::NodeHandle;
-      n2 = new ros::NodeHandle;
-      n3 = new ros::NodeHandle;
-      n4 = new ros::NodeHandle;
-      n5 = new ros::NodeHandle;
-      n6 = new ros::NodeHandle;
+      // n1 = new ros::NodeHandle;
+      // n2 = new ros::NodeHandle;
+      // n3 = new ros::NodeHandle;
+      // n4 = new ros::NodeHandle;
+      // n5 = new ros::NodeHandle;
+      // n6 = new ros::NodeHandle;
       
       // first_run = true;
-      rate = new ros::Rate(1);
+      rate = new ros::Rate(100);
 
       pub1 = n->advertise<std_msgs::Float64>(topics_publisher[0], 1000);
-      pub2 = n1->advertise<std_msgs::Float64>(topics_publisher[1], 1000);
-      pub3 = n2->advertise<std_msgs::Float64>(topics_publisher[2], 1000);
+      pub2 = n->advertise<std_msgs::Float64>(topics_publisher[1], 1000);
+      pub3 = n->advertise<std_msgs::Float64>(topics_publisher[2], 1000);
 
-      sub1 = n3->subscribe (topics_subscriber[0], 1000, &roswrap::Callback_Jonit, this);
-      sub2 = n4->subscribe (topics_subscriber[1], 1000, &roswrap::Callback_Sonar_1, this);
-      sub3 = n5->subscribe (topics_subscriber[2], 1000, &roswrap::Callback_Sonar_2, this);
-      sub4 = n6->subscribe (topics_subscriber[3], 1000, &roswrap::Callback_Sonar_3, this);
+      sub1 = n->subscribe (topics_subscriber[0], 1000, &roswrap::Callback_Jonit, this);
+      sub2 = n->subscribe (topics_subscriber[1], 1000, &roswrap::Callback_Sonar_1, this);
+      sub3 = n->subscribe (topics_subscriber[2], 1000, &roswrap::Callback_Sonar_2, this);
+      sub4 = n->subscribe (topics_subscriber[3], 1000, &roswrap::Callback_Sonar_3, this);
   
     }
     
@@ -191,7 +191,7 @@ ros::Rate *rate;                          // Ros Rate
 
       {
         ros::spinOnce(); 
-        rate->sleep();
+        // rate->sleep();
         wait(SC_ZERO_TIME);
       }
 
@@ -222,12 +222,12 @@ ros::Rate *rate;                          // Ros Rate
       delete oval5;
       delete oval6;
       delete n;
-      delete n1;
-      delete n2;
-      delete n3;
-      delete n4;
-      delete n5;
-      delete n6;
+      // delete n1;
+      // delete n2;
+      // delete n3;
+      // delete n4;
+      // delete n5;
+      // delete n6;
 
 
 

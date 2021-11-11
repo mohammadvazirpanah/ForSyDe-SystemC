@@ -39,11 +39,11 @@ const double rot_vel_gain = 2;
 const double lin_vel_gain = 4;
 const double sonar_margin = 0.7;
 const double max_sonar = 1.4;
-//const double desired_angle = func(-10,5.7735026919) ; // destination_x , destination_y 
-const double desired_angle = 2.09;
 const double destination_x = -10;
 const double destination_y = 5.7735026919;
-const double current_angle = 5;
+const double desired_angle = func (destination_x, destination_y); // destination_x , destination_y 
+//const double desired_angle = 2.09;
+
 
 
 
