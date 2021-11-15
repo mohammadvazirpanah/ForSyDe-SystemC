@@ -2,6 +2,7 @@
 #include "forsyde/ros_wrapper.hpp"
 #include <iostream>
 #include <controller2.hpp>
+#include <controller_transform.hpp>
 #include "sensor_msgs/Range.h"
 #include <math.h>
 #include <limits.h>
@@ -9,45 +10,29 @@
 using namespace sc_core;
 using namespace ForSyDe;
 
-void inv_kinematics_func (std::array<abst_ext<double>,3>& joint_state, const double& x, const double& y, const double& z)
+void inv_kinematics_func (std::array<abst_ext<double>,3>& in_transform_mealy, const double& x, const double& y, const double& z)
 {
     double x_pos, y_pos, angular_pos, in_angular_pos;
-    double added_y, added_x, curr_angle;
-    static double cur_x, cur_y, last_in_y, last_in_x;
-    
-    // left2_pos  = x;
-    // left_pos = y;
-    // right_pos = z;
+
     angular_pos   =  ((-1.0/3.0) * (y)) + ((-1.0/3.0) * (z)) + ((-1.0/3.0) * (x));
     x_pos         =  ((2.0/3.0) * (y)) + ((-1.0/3.0) * (z)) + ((-1.0/3.0) * (x)); 
     y_pos         =  ( 0.0 * y) + ((-0.57735026919) * (z)) + (0.57735026919 * (x));
 
-
     in_angular_pos = ((2 *3.14159265359 * angular_pos) / (50.84)) ; 
-    curr_angle = in_angular_pos + (3.14159265359/3.0) ; 
 
-    if (cur_x)
-    {
-        cur_x = 0.0;
-        cur_y = 0.0;
-        last_in_x = 0.0;
-        last_in_y = 0.0;
-    }
+    set_val (in_transform_mealy [0],x_pos);
+    set_val (in_transform_mealy [1],y_pos);
+    set_val (in_transform_mealy [2],in_angular_pos);
 
-    added_y = (y_pos - last_in_y) * cos(-in_angular_pos) + (x_pos - last_in_x) * sin(-in_angular_pos);
-    added_x = (-1)*(y_pos - last_in_y) * sin(-in_angular_pos) + (x_pos - last_in_x) * cos(-in_angular_pos);
-    cur_x = cur_x + added_x;
-    cur_y = cur_y + added_y;
-    last_in_x = x_pos;
-    last_in_y = y_pos;
+}
+
+
          
 
     
-    set_val (joint_state [0],cur_y);
-    set_val (joint_state [1],cur_x);
-    set_val (joint_state [2],curr_angle);
 
-}
+
+
 
 void kinematics_func(std::array<abst_ext<double>,3> &out, const std::array<abst_ext<double>,3> &in)
 {
@@ -77,6 +62,8 @@ SC_MODULE(top)
     SY::signal<double> from_unzip1, from_unzip2, from_unzip3; 
 
     SY::signal<std::array<abst_ext<double>,3>> joint_state;
+    SY::signal<std::array<abst_ext<double>,3>> in_transform_mealy;
+    SY::signal<std::array<abst_ext<double>,3>> out_transform_mealy;
     SY::signal<std::array<abst_ext<double>,6>> to_mealy;
     SY::signal<std::array<abst_ext<double>,3>> from_mealy;
     SY::signal<std::array<abst_ext<double>,3>> from_kinematics;
@@ -93,7 +80,7 @@ SC_MODULE(top)
     {
         "/robot/joint_states",
         "/sonar_sonar_link_1",
-        "/sonar_sonar_link_2",
+        "/sonar_sonar_link_2", //right
         "/sonar_sonar_link_3"
     };
 
@@ -115,16 +102,24 @@ SC_MODULE(top)
         
         SY::make_scomb3("inverse_kinematics",
                         inv_kinematics_func, 
-                        joint_state, 
+                        in_transform_mealy, 
                         from_wrapper1, 
                         from_wrapper2, 
                         from_wrapper3
                         );
 
-        auto joint_unzip = SY::make_unzipX("joint_unzip",joint_state);
-        joint_unzip -> oport[0](from_unzip1);
-        joint_unzip -> oport[1](from_unzip2);
-        joint_unzip -> oport[2](from_unzip3);
+        SY::make_smealy("controller_transform",
+                transform_ns_func,
+                transform_od_func,
+                std::array<abst_ext<double>,4> {0.0,0.0,0.0,0.0},
+                out_transform_mealy,
+                in_transform_mealy
+                );
+
+        auto joint_unzip = SY::make_unzipX("joint_unzip",out_transform_mealy);
+        joint_unzip -> oport[0] (from_unzip1);
+        joint_unzip -> oport[1] (from_unzip2);
+        joint_unzip -> oport[2] (from_unzip3);
         
         auto zip_mealy = SY::make_zipX ("zip_mealy",to_mealy); 
         zip_mealy -> iport[0] (from_unzip1);
@@ -133,6 +128,7 @@ SC_MODULE(top)
         zip_mealy -> iport[3] (from_wrapper4);
         zip_mealy -> iport[4] (from_wrapper5);
         zip_mealy -> iport[5] (from_wrapper6);
+
 
         SY::make_smealy("controller1",
                         controller_ns_func,
@@ -153,6 +149,9 @@ SC_MODULE(top)
         wrapper_unzip -> oport[1](to_wrapper2);
         wrapper_unzip -> oport[2](to_wrapper3);
     }
+        // sc_trace_file *tr1 = sc_create_tabular_trace_file("test.dat");
+        // sc_trace(tr1, from_wrapper1, "from_wrapper1");
+        // tr1->disable();
 
     #ifdef FORSYDE_INTROSPECTION
         void start_of_simulation()

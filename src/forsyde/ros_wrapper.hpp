@@ -75,12 +75,7 @@ bool first_run;
 ros::Publisher pub1, pub2, pub3;          // Publish in Prep Step
 ros::Subscriber sub1,sub2,sub3,sub4;      // Subscribe in Prod Step 
 ros::NodeHandle *n;                       // Node Handle For Ros Environment 
-// ros::NodeHandle *n1;
-// ros::NodeHandle *n2;
-// ros::NodeHandle *n3;
-// ros::NodeHandle *n4;
-// ros::NodeHandle *n5;
-// ros::NodeHandle *n6;
+
 
 
 ros::Rate *rate;                          // Ros Rate 
@@ -128,24 +123,17 @@ ros::Rate *rate;                          // Ros Rate
 		  ros::init(argc, argv, "forsyde");
       ros::start();
       n = new ros::NodeHandle;
-      // n1 = new ros::NodeHandle;
-      // n2 = new ros::NodeHandle;
-      // n3 = new ros::NodeHandle;
-      // n4 = new ros::NodeHandle;
-      // n5 = new ros::NodeHandle;
-      // n6 = new ros::NodeHandle;
       
-      // first_run = true;
-      rate = new ros::Rate(100);
+      //rate = new ros::Rate(100);
 
-      pub1 = n->advertise<std_msgs::Float64>(topics_publisher[0], 1000);
-      pub2 = n->advertise<std_msgs::Float64>(topics_publisher[1], 1000);
-      pub3 = n->advertise<std_msgs::Float64>(topics_publisher[2], 1000);
+      pub1 = n->advertise<std_msgs::Float64>(topics_publisher[0], 100);
+      pub2 = n->advertise<std_msgs::Float64>(topics_publisher[1], 100);
+      pub3 = n->advertise<std_msgs::Float64>(topics_publisher[2], 100);
 
-      sub1 = n->subscribe (topics_subscriber[0], 1000, &roswrap::Callback_Jonit, this);
-      sub2 = n->subscribe (topics_subscriber[1], 1000, &roswrap::Callback_Sonar_1, this);
-      sub3 = n->subscribe (topics_subscriber[2], 1000, &roswrap::Callback_Sonar_2, this);
-      sub4 = n->subscribe (topics_subscriber[3], 1000, &roswrap::Callback_Sonar_3, this);
+      sub1 = n->subscribe (topics_subscriber[0], 100, &roswrap::Callback_Jonit, this);
+      sub2 = n->subscribe (topics_subscriber[1], 100, &roswrap::Callback_Sonar_1, this);
+      sub3 = n->subscribe (topics_subscriber[2], 100, &roswrap::Callback_Sonar_2, this);
+      sub4 = n->subscribe (topics_subscriber[3], 100, &roswrap::Callback_Sonar_3, this);
   
     }
     
@@ -175,7 +163,7 @@ ros::Rate *rate;                          // Ros Rate
       pub3.publish(msg3);
       
       ros::spinOnce(); 
-
+      //rate->sleep();
     }
     
     void exec() 
@@ -222,16 +210,6 @@ ros::Rate *rate;                          // Ros Rate
       delete oval5;
       delete oval6;
       delete n;
-      // delete n1;
-      // delete n2;
-      // delete n3;
-      // delete n4;
-      // delete n5;
-      // delete n6;
-
-
-
-
       delete rate;
       ros::shutdown();
     }
@@ -289,56 +267,3 @@ inline roswrap<T0,T1>* make_roswrap(const std::string& pName,
 }
 
 #endif
-
-
-    // void Callback_Sonar(const sensor_msgs::Range::ConstPtr& msg)
-    // {
-    //   float max_range = msg-> max_range ;
-    //   float min_range = msg-> min_range ;
-    //   float range = msg->range ; 
-    //   oval->set_val(msg->range);
-    //   ROS_INFO("Sonar Range: [%f]", oval->from_abst_ext(0.0));
-    // }
-
-
-
-    //     void Callback_Jonit(const sensor_msgs::JointState::ConstPtr& msg)
-    // {
-    //     // ROS_INFO("Joint State left_pos: [%f]", -msg->position[0]);
-    //     // ROS_INFO("Joint State left2_pos: [%f]", msg->position[1]);
-    //     // ROS_INFO("Joint State right_pos: [%f]", msg->position[2]);
-
-    //     double x_pos, y_pos, angular_pos;
-
-    //     double left_pos =(-1.0) * msg->position[0];
-    //     double left2_pos = msg->position[1];
-    //     double right_pos = msg->position[2];
-
-    //     angular_pos   =  ((-1.0)*(1.0/3.0) * (left2_pos)) + ((-1.0)*(1.0/3.0) * (right_pos)) + ((-1.0)*(1.0/3.0) * (left_pos));
-    //     x_pos         =  ((2.0/3.0) * (left2_pos)) + ((-1.0)*(1.0/3.0) * (right_pos)) + ((-1.0)*(1.0/3.0) * (left_pos)); 
-    //     y_pos         =  ( 0.0 * left2_pos) + ((-1.0)*(0.57735026919) * (right_pos)) + (0.57735026919 * (left_pos));
-
-    //     double in_angular_pos = ((2 *3.14159265359 * angular_pos) / (50.84)) ; 
-    //     double cur_x, cur_y, last_in_y, last_in_x, added_y, added_x;
-    //     if(cur_x == 0)
-    //     {
-    //       cur_x = 0.0;
-    //       cur_y = 0.0;
-    //       last_in_x = 0.0;
-    //       last_in_y = 0.0;
-    //     }
-
-    //     added_y = (y_pos - last_in_y) * cos((-1)*in_angular_pos) + (x_pos - last_in_x) * sin((-1)*in_angular_pos);
-    //     added_x = -1*(y_pos - last_in_y) * sin(-in_angular_pos) + (x_pos - last_in_x) * cos((-1)*in_angular_pos);
-    //     cur_x = cur_x + added_x;
-    //     cur_y = cur_y + added_y;
-    //     last_in_x = x_pos;
-    //     last_in_y = y_pos;
-    //     oval1->set_val (cur_y);       //transformed_y
-    //     oval2-> set_val (cur_x);     // transformed_x
-    //     double temp = ((2 *3.14159265359 * angular_pos) / (50.84)) + (3.14159265359/3.0) ; 
-    //     oval3->set_val (temp);      //angle_radian 
-
- 
-        
-    // }
