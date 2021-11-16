@@ -13,8 +13,6 @@
 #include <stdio.h>
 #include <math.h>
 
-
-
 namespace ForSyDe
 {
 
@@ -75,9 +73,6 @@ bool first_run;
 ros::Publisher pub1, pub2, pub3;          // Publish in Prep Step
 ros::Subscriber sub1,sub2,sub3,sub4;      // Subscribe in Prod Step 
 ros::NodeHandle *n;                       // Node Handle For Ros Environment 
-
-
-
 ros::Rate *rate;                          // Ros Rate 
 
 
@@ -123,7 +118,7 @@ ros::Rate *rate;                          // Ros Rate
 		  ros::init(argc, argv, "forsyde");
       ros::start();
       n = new ros::NodeHandle;
-      
+
       //rate = new ros::Rate(100);
 
       pub1 = n->advertise<std_msgs::Float64>(topics_publisher[0], 100);
@@ -163,7 +158,6 @@ ros::Rate *rate;                          // Ros Rate
       pub3.publish(msg3);
       
       ros::spinOnce(); 
-      //rate->sleep();
     }
     
     void exec() 
@@ -173,7 +167,6 @@ ros::Rate *rate;                          // Ros Rate
     
     void prod()
     {
-      
       
       while (oval1->is_absent() || oval2->is_absent() || oval3->is_absent() || oval4->is_absent() || oval5->is_absent()  || oval6->is_absent())
 
@@ -259,9 +252,6 @@ inline roswrap<T0,T1>* make_roswrap(const std::string& pName,
 
     return p;
 }
-
-
-
 
 }
 }

@@ -2,6 +2,7 @@
 #include "forsyde/ros_wrapper.hpp"
 #include <iostream>
 #include <controller2.hpp>
+#include <global.hpp>
 #include <controller_transform.hpp>
 #include "sensor_msgs/Range.h"
 #include <math.h>
@@ -12,27 +13,19 @@ using namespace ForSyDe;
 
 void inv_kinematics_func (std::array<abst_ext<double>,3>& in_transform_mealy, const double& x, const double& y, const double& z)
 {
-    double x_pos, y_pos, angular_pos, in_angular_pos;
+    double x_pos, y_pos, angular_pos;
 
     angular_pos   =  ((-1.0/3.0) * (y)) + ((-1.0/3.0) * (z)) + ((-1.0/3.0) * (x));
     x_pos         =  ((2.0/3.0) * (y)) + ((-1.0/3.0) * (z)) + ((-1.0/3.0) * (x)); 
     y_pos         =  ( 0.0 * y) + ((-0.57735026919) * (z)) + (0.57735026919 * (x));
 
-    in_angular_pos = ((2 *3.14159265359 * angular_pos) / (50.84)) ; 
+    angular_pos = ((2 * pi * angular_pos) / (50.84)) ; 
 
     set_val (in_transform_mealy [0],x_pos);
     set_val (in_transform_mealy [1],y_pos);
-    set_val (in_transform_mealy [2],in_angular_pos);
+    set_val (in_transform_mealy [2],angular_pos);
 
 }
-
-
-         
-
-    
-
-
-
 
 void kinematics_func(std::array<abst_ext<double>,3> &out, const std::array<abst_ext<double>,3> &in)
 {
@@ -50,8 +43,6 @@ void kinematics_func(std::array<abst_ext<double>,3> &out, const std::array<abst_
     set_val (out [0],left_speed);
     set_val (out [1],right_speed);
     set_val (out [2],left2_speed);
-
- 
 }
 
 SC_MODULE(top)
@@ -111,7 +102,7 @@ SC_MODULE(top)
         SY::make_smealy("controller_transform",
                 transform_ns_func,
                 transform_od_func,
-                std::array<abst_ext<double>,4> {0.0,0.0,0.0,0.0},
+                initial_state_transform {NaN::quiet_NaN(), 0.0, 0.0, 0.0},
                 out_transform_mealy,
                 in_transform_mealy
                 );
@@ -130,10 +121,10 @@ SC_MODULE(top)
         zip_mealy -> iport[5] (from_wrapper6);
 
 
-        SY::make_smealy("controller1",
+        SY::make_smealy("controller2",
                         controller_ns_func,
                         controller_od_func,
-                        std::make_tuple(0.0,0.0,0.0,0,0),
+                        std::make_tuple(0.0, 0.0, 0.0, 0, Initial_Angle_Changer),
                         from_mealy,
                         to_mealy
                         );
@@ -149,9 +140,6 @@ SC_MODULE(top)
         wrapper_unzip -> oport[1](to_wrapper2);
         wrapper_unzip -> oport[2](to_wrapper3);
     }
-        // sc_trace_file *tr1 = sc_create_tabular_trace_file("test.dat");
-        // sc_trace(tr1, from_wrapper1, "from_wrapper1");
-        // tr1->disable();
 
     #ifdef FORSYDE_INTROSPECTION
         void start_of_simulation()
