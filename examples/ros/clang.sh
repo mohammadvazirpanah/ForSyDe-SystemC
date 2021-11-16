@@ -1,1 +1,0 @@
-clang++ -I. -I/home/mohammad/Ros_Project/MyCode/ForSyDe-SystemC/src -I/opt/ros/noetic/include -L/opt/ros/noetic/lib -Wl,-rpath=/opt/ros/noetic/lib main.cpp -o main -lroscpp -lrosconsole -lrostime -lroscpp_serialization -lsystemc -lm -DFORSYDE_INTROSPECTION
