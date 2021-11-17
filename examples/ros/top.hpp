@@ -102,7 +102,7 @@ SC_MODULE(top)
         SY::make_smealy("controller_transform",
                 transform_ns_func,
                 transform_od_func,
-                initial_state_transform {NaN::quiet_NaN(), 0.0, 0.0, 0.0},
+                initial_state_transform {0.0, 0.0, 0.0, 0.0},
                 out_transform_mealy,
                 in_transform_mealy
                 );
@@ -120,11 +120,10 @@ SC_MODULE(top)
         zip_mealy -> iport[4] (from_wrapper5);
         zip_mealy -> iport[5] (from_wrapper6);
 
-
         SY::make_smealy("controller2",
                         controller_ns_func,
                         controller_od_func,
-                        std::make_tuple(0.0, 0.0, 0.0, 0, Initial_Angle_Changer),
+                        std::make_tuple(0.0, 0.0, 0.0, 0, Angle_Changer),
                         from_mealy,
                         to_mealy
                         );

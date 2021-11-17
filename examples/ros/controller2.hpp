@@ -35,7 +35,7 @@ void controller_ns_func(next_state& ns,
     switch (state)
     {   
 
-        case Initial_Angle_Changer:  
+        case Angle_Changer:  
             if (remainderf(abs(desired_angle-current_angle),2*pi) < rot_pos_margin)
             {
                 state = Move_Toward;
@@ -65,7 +65,7 @@ void controller_ns_func(next_state& ns,
 
         case Obstacle_Avoid:  
             if ((move_around == 1) && (abs(current_grad-destination_grad)<0.01))
-                state = Initial_Angle_Changer;
+                state = Angle_Changer;
             
             else if (0.2*sonar_margin<sonar_margin-right_sonar)
             {   
@@ -166,7 +166,7 @@ void controller_od_func(output& out,
 
     switch (state)
     {
-        case Initial_Angle_Changer:
+        case Angle_Changer:
             w_out = rot_vel_gain*(desired_angle-current_angle)/abs(desired_angle-current_angle);
             x_out = 0;
             y_out = 0; 

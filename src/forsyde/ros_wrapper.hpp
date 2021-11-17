@@ -119,16 +119,16 @@ ros::Rate *rate;                          // Ros Rate
       ros::start();
       n = new ros::NodeHandle;
 
-      //rate = new ros::Rate(100);
+      // rate = new ros::Rate(100);
 
-      pub1 = n->advertise<std_msgs::Float64>(topics_publisher[0], 100);
-      pub2 = n->advertise<std_msgs::Float64>(topics_publisher[1], 100);
-      pub3 = n->advertise<std_msgs::Float64>(topics_publisher[2], 100);
+      pub1 = n->advertise<std_msgs::Float64>(topics_publisher[0], 1000);
+      pub2 = n->advertise<std_msgs::Float64>(topics_publisher[1], 1000);
+      pub3 = n->advertise<std_msgs::Float64>(topics_publisher[2], 1000);
 
-      sub1 = n->subscribe (topics_subscriber[0], 100, &roswrap::Callback_Jonit, this);
-      sub2 = n->subscribe (topics_subscriber[1], 100, &roswrap::Callback_Sonar_1, this);
-      sub3 = n->subscribe (topics_subscriber[2], 100, &roswrap::Callback_Sonar_2, this);
-      sub4 = n->subscribe (topics_subscriber[3], 100, &roswrap::Callback_Sonar_3, this);
+      sub1 = n->subscribe (topics_subscriber[0], 1000, &roswrap::Callback_Jonit, this);
+      sub2 = n->subscribe (topics_subscriber[1], 1000, &roswrap::Callback_Sonar_1, this);
+      sub3 = n->subscribe (topics_subscriber[2], 1000, &roswrap::Callback_Sonar_2, this);
+      sub4 = n->subscribe (topics_subscriber[3], 1000, &roswrap::Callback_Sonar_3, this);
   
     }
     
@@ -158,6 +158,7 @@ ros::Rate *rate;                          // Ros Rate
       pub3.publish(msg3);
       
       ros::spinOnce(); 
+      
     }
     
     void exec() 

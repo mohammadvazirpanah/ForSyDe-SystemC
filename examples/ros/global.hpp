@@ -7,7 +7,7 @@
 using namespace ForSyDe;
 
 
-enum MealyState {Initial_Angle_Changer, 
+enum MealyState {Angle_Changer, 
                  Move_Toward, 
                  Obstacle_Avoid, 
                  Move_Far, 
@@ -50,11 +50,9 @@ typedef std::tuple<double,double,double,int,MealyState> next_state;
 typedef std::tuple<double,double,double,int,MealyState> current_state;
 typedef std::array<abst_ext<double>,6> input;
 typedef std::array<abst_ext<double>,3> output;
-
 /*
 Mealy Transform Type 
 */
-
 typedef std::array<abst_ext<double>,4> next_state_transform;
 typedef std::array<abst_ext<double>,4> current_state_transform, initial_state_transform;
 typedef std::array<abst_ext<double>,3> input_transform;
@@ -69,10 +67,5 @@ const double max_sonar = 1.4;
 const double destination_x = -10.0;
 const double destination_y = 5.7735026919;
 const double desired_angle = func (destination_x, destination_y); 
-
- 
-
-
-
 
 #endif

@@ -19,7 +19,6 @@ void transform_ns_func(next_state_transform& ns,
     double added_y, added_x;
     double cur_x, cur_y, last_in_x, last_in_y; 
     
-
     in_x           = from_abst_ext(inp[0],0.0);
     in_y           = from_abst_ext(inp[1],0.0);
     in_angular_pos = from_abst_ext(inp[2],0.0);
@@ -27,15 +26,6 @@ void transform_ns_func(next_state_transform& ns,
     cur_y          = from_abst_ext(cs[1],0.0);
     last_in_x      = from_abst_ext(cs[2],0.0);
     last_in_y      = from_abst_ext(cs[3],0.0);
-
-    
-    if(std::isnan(cur_x))
-    {
-        cur_x = 0.0;
-        cur_y = 0.0;
-        last_in_x = 0.0;
-        last_in_y = 0.0;
-    }
 
     added_y = (in_y - last_in_y) * cos((-1.0)*in_angular_pos) + (in_x - last_in_x) * sin((-1.0)*in_angular_pos);
     added_x = (-1.0)*(in_y - last_in_y) * sin((-1.0)*in_angular_pos) + (in_x - last_in_x) * cos((-1.0)*in_angular_pos);
@@ -48,7 +38,6 @@ void transform_ns_func(next_state_transform& ns,
     set_val (ns[1],cur_y);
     set_val (ns[2],last_in_x);
     set_val (ns[3],last_in_y);
-
 }   
 
 void transform_od_func(output_transform& out,
@@ -70,14 +59,6 @@ void transform_od_func(output_transform& out,
     last_in_x      = from_abst_ext(cs[2],0.0);
     last_in_y      = from_abst_ext(cs[3],0.0);
 
-    if(std::isnan(cur_x))
-    {
-        cur_x = 0.0;
-        cur_y = 0.0;
-        last_in_x = 0.0;
-        last_in_y = 0.0;
-    }
-
     added_y = (in_y - last_in_y) * cos((-1.0)*in_angular_pos) + (in_x - last_in_x) * sin((-1.0)*in_angular_pos);
     added_x = (-1.0)*(in_y - last_in_y) * sin((-1.0)*in_angular_pos) + (in_x - last_in_x) * cos((-1.0)*in_angular_pos);
     cur_x = cur_x + added_x;
@@ -89,7 +70,7 @@ void transform_od_func(output_transform& out,
     set_val (out[1],cur_x);
     set_val (out[2],curr_angle);
 
+    // std::cout<<"cur_x="<<cur_x<<"\tcur_y="<<cur_y<<"\tcurr_angle="<<curr_angle<<std::endl;
 }
-
 
 #endif

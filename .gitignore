@@ -1,3 +1,6 @@
 .vscode/
 examples/ros/clang.sh
 examples/ros/main
+examples/ros/g++.sh
+examples/ros/gen
+
