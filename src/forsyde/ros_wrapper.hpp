@@ -29,13 +29,10 @@ public:
     SY_in<T1>  iport1, iport2, iport3;       
     SY_out<T0> oport1, oport2, oport3, oport4, oport5, oport6; 
 
-    
-    //typedef std::function<void(abst_ext<T0>&,const abst_ext<T1>&)> functype;
 
     roswrap(const sc_module_name& _name,                    
             const std::vector <std::string>& topics_publisher,          
             const std::vector <std::string>& topics_subscriber
-            //const functype& _func_callback
             ): 
             sy_process(_name),
             iport1("iport1"), iport2("iport2"), iport3("iport3"),
@@ -43,7 +40,6 @@ public:
             topics_publisher(topics_publisher),
             topics_subscriber(topics_subscriber),
             first_run(true)
-            //_func_callback(_func_callback)                 //Function to be passed for Callback function in ROS 
 
     {
 #ifdef FORSYDE_INTROSPECTION
@@ -59,28 +55,27 @@ private:
 std::vector <std::string> topics_publisher;
 std::vector <std::string> topics_subscriber;
 std::string _name;
-abst_ext<T1> *ival1;
-abst_ext<T1> *ival2;
-abst_ext<T1> *ival3;
-abst_ext<T0> *oval1; //y
-abst_ext<T0> *oval2; //x
-abst_ext<T0> *oval3; //angle
+abst_ext<T1> *ival1; //X-Speed of the robot
+abst_ext<T1> *ival2; //Y-Speed of the robot
+abst_ext<T1> *ival3; //Z-Speed of the robot
+abst_ext<T0> *oval1; //Y-Coridinate
+abst_ext<T0> *oval2; //X-Coridinate
+abst_ext<T0> *oval3; //Z-Coridinate -> Angle of the robot
 abst_ext<T0> *oval4; //sonar range_1
 abst_ext<T0> *oval5; //sonar range_2
 abst_ext<T0> *oval6; //sonar range_3
-bool first_run;
-//functype _func_callback;
 ros::Publisher pub1, pub2, pub3;          // Publish in Prep Step
 ros::Subscriber sub1,sub2,sub3,sub4;      // Subscribe in Prod Step 
 ros::NodeHandle *n;                       // Node Handle For Ros Environment 
-ros::Rate *rate;                          // Ros Rate 
+ros::Rate *rate;                          // Ros Rate (Nedded For Timed Callbacks)
+bool first_run;                           // First Run Flag
 
-
+/* CallBack Functions are Declerated Here */
     void Callback_Jonit(const sensor_msgs::JointState::ConstPtr& msg)
     {
-        oval1->set_val (msg->position[0]);         //left2 
-        oval2->set_val ((-1)*msg->position[1]);   // left   
-        oval3->set_val (msg->position[2]);       //  right
+        oval1->set_val (msg->position[0]);         //Sensor left2 of OminiBot
+        oval2->set_val ((-1)*msg->position[1]);   // Sensor left of OminiBot 
+        oval3->set_val (msg->position[2]);       //  Sensor right of OminiBot
         
     }
 
@@ -100,7 +95,6 @@ ros::Rate *rate;                          // Ros Rate
     }
   
   
-  
     void init()
     {
 
@@ -115,7 +109,7 @@ ros::Rate *rate;                          // Ros Rate
       oval6 = new abst_ext<T0>; 
       int argc;
       char **argv; 
-		  ros::init(argc, argv, "forsyde");
+		  ros::init(argc, argv, "ForSyDe_ROS_Wrapper");
       ros::start();
       n = new ros::NodeHandle;
 
@@ -234,7 +228,6 @@ template <class T0, template <class> class OIf,
 inline roswrap<T0,T1>* make_roswrap(const std::string& pName,
     const std::vector <std::string>& pnames,
     const std::vector <std::string>& snames,
-    //const typename roswrap<T0,T1>::functype& _func_callback,
     OIf<T0>& out1S, OIf<T0>& out2S, OIf<T0>& out3S, OIf<T0>& out4S, OIf<T0>& out5S, OIf<T0>& out6S,
     I1If<T1>& inp1S, I1If<T1>& inp2S, I1If<T1>& inp3S
     )
