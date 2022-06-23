@@ -11,10 +11,10 @@ using namespace ForSyDe;
 
 void next_state_func(int& ns,
                     const int& cs,
-                    const abst_ext<int>& inp)
+                    const int& inp)
 {
     int current_state = cs;
-    int input = from_abst_ext(inp,0);
+    int input = inp;
     if (current_state == 1)
     {
         if (input<10)
@@ -42,27 +42,30 @@ void next_state_func(int& ns,
 
 }
 
-void output_decode_func(abst_ext<int>& out,
+void output_decode_func(int& out,
                         const int& cs,
-                        const abst_ext<int>& inp)
+                        const int& inp)
 {
 
     int current_state = cs;
-    int input = from_abst_ext(inp,0);
-    int rate = from_abst_ext(inp,0); 
+    int input = inp;
+    int rate = inp;
 
     if (current_state == 1)
     {
         if (input<10)
         {
             rate++;
-            set_val(out, rate);
+            // set_val(out, rate);
+            out = rate;
 
         }
         if (input>=10)
         {
             rate--;
-            set_val(out, rate);
+            // set_val(out, rate);
+            out = rate;
+
 
         }
     }
@@ -71,7 +74,9 @@ void output_decode_func(abst_ext<int>& out,
         if (input<10)
         {
             rate--;
-            set_val(out, rate);
+            // set_val(out, rate);
+            out = rate;
+
 
 
         }
