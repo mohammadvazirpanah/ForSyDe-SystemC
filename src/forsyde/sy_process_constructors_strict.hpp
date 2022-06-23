@@ -1076,9 +1076,9 @@ public:
     smealy(const sc_module_name& _name,      ///< process name
            const ns_functype& _ns_func, ///< The next_state function
            const od_functype& _od_func, ///< The output-decoding function
-           const ST& init_st  ///< Initial state
-          ) : sy_process(_name), _ns_func(_ns_func), _od_func(_od_func),
-              init_st(init_st)
+           const ST& init_st,  ///< Initial state
+           const functype_goal& goals ///< The goal function (optional) (default: 0)
+          ) : sy_process(_name, goals), _ns_func(_ns_func), _od_func(_od_func), init_st(init_st)
     {
 #ifdef FORSYDE_INTROSPECTION
         std::string func_name = std::string(basename());

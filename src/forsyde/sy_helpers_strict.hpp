@@ -329,11 +329,12 @@ inline smealy<IT,ST,OT>* make_smealy(const std::string& pName,
     const typename smealy<IT,ST,OT>::ns_functype& _ns_func,
     const typename smealy<IT,ST,OT>::od_functype& _od_func,
     const ST& init_st,
+    const typename smealy<IT,ST,OT>::functype_goal& _goal_func,
     OIf<OT>& outS,
     IIf<IT>& inpS
     )
 {
-    auto p = new smealy<IT,ST,OT>(pName.c_str(), _ns_func, _od_func, init_st);
+    auto p = new smealy<IT,ST,OT>(pName.c_str(), _ns_func, _od_func, init_st, _goal_func);
     
     (*p).iport1(inpS);
     (*p).oport1(outS);

@@ -225,6 +225,8 @@ class process : public sc_module
 {
 private:
     //! 
+
+
     SC_HAS_PROCESS(process);
 
     //! The main and only execution thread of the module
@@ -297,6 +299,7 @@ protected:
 
 public:
 
+
 #ifdef FORSYDE_INTROSPECTION
     //! Pointers to the input ports and their bound channels
     std::vector<PortInfo> boundInChans;
@@ -311,8 +314,12 @@ public:
     /*! It creates an SC_THREAD which reads data from its input port,
      * processes them and writes the results using the output port.
      */
-    process(sc_module_name _name    ///< The name of the ForSyDe process
-            ): sc_module(_name)
+    typedef std::function<bool(void*)> functype_goal; // function type for goal function to be passed to the constructor 
+    functype_goal func_goal;
+
+    process(sc_module_name _name, ///< The name of the ForSyDe process
+            const functype_goal &func_goal=0 ///< The goal function to be passed to the constructor (default: 0)
+            ): sc_module(_name), func_goal (func_goal)
     {
         SC_THREAD(worker);
     }
