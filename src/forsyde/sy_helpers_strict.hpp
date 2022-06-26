@@ -540,6 +540,21 @@ inline unzipX<T1,N>* make_unzipX(const std::string& pName,
     return p;
 }
 
+
+
+template <class T, template <class> class OIf>
+inline signalabst<T>* make_signalabst(const std::string& pName,
+    const std::vector<T>& in_vec,
+    const unsigned long& take,
+    OIf<T>& outS
+    )
+{
+    auto p = new signalabst<T>(pName.c_str(), in_vec, take);
+    
+    (*p).oport(outS);
+    
+    return p;
+}
 }
 }
 
