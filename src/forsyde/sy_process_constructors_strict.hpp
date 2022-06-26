@@ -1990,6 +1990,144 @@ private:
 #endif
 };
 
+// template <typename T0, typename T1>
+// class abstvalue : public sy_process
+// {
+// public:
+//     SY_in<T1>  iport1;       ///< port for the input channel
+//     SY_out<T0> oport1;        ///< port for the output channel
+    
+//     //! Type of the function to be passed to the process constructor
+//     typedef std::function<void(T0&,const T1&)> functype;
+
+//     abstvalue (const sc_module_name& _name,      ///< process name
+//          const functype& _func             ///< function to be passed
+//          ) : sy_process(_name), iport1("iport1"), oport1("oport1"),_func(_func)
+
+    
+//     //! Specifying from which process constructor is the module built
+//     std::string forsyde_kind() const {return "SY::abstvalue";}
+
+// private:
+//     // Inputs and output variables
+//     T0* oval;
+//     T1* ival1;
+    
+//     //! The function passed to the process constructor
+//     functype _func;
+    
+//     //Implementing the abstract semantics
+//     void init()
+//     {
+//         oval = new T0;
+//         ival1 = new T1;
+//     }
+    
+//     void prep()
+//     {
+//         auto ival1_temp = iport1.read();
+//         CHECK_PRESENCE(ival1_temp);
+//         *ival1 = unsafe_from_abst_ext(ival1_temp);
+//     }
+    
+//     void exec()
+//     {
+//         _func(*oval, *ival1);
+//     }
+    
+//     void prod()
+//     {
+//         WRITE_MULTIPORT(oport1, abst_ext<T0>(*oval))
+//     }
+    
+//     void clean()
+//     {
+//         delete ival1;
+//         delete oval;
+//     }
+
+
+template <class T>
+class signalabst : public sy_process
+{
+public:
+    // SY_in <std::vector<T>> iport1;                    
+    SY_out <T> oport;     
+
+    signalabst(const sc_module_name& _name,   
+            const std::vector<T>& in_vec,
+             const unsigned long& take=0
+            ) : sy_process(_name), in_vec(in_vec), take(take)
+    {
+#ifdef FORSYDE_INTROSPECTION
+
+
+#endif
+    }
+    
+    //! Specifying from which process constructor is the module built
+    std::string forsyde_kind() const {return "SY::signalabst";}
+    
+private:
+
+    T* oval;
+
+    std::vector<T> in_vec;
+
+    
+    unsigned long take;
+    unsigned long tok_cnt;
+    float temp = 0;
+
+
+    //Implementing the abstract semantics
+    void init() 
+    {
+        oval = new T;
+        tok_cnt = 0;
+
+    }
+    
+    void prep() {}
+    
+    void exec() {}
+    
+    void prod()
+    {
+        for (unsigned int i=0; i<in_vec.size(); i++)
+        {
+            while (tok_cnt<take)
+            {
+                temp += in_vec[i];
+                tok_cnt++;
+                i++;
+            }
+
+            *oval = (temp/take);
+            WRITE_MULTIPORT(oport, abst_ext<T>(*oval))
+            tok_cnt = 0;
+            temp = 0;
+        }
+
+
+    }
+    
+    void clean() 
+    {
+        delete oval;
+    }
+    
+#ifdef FORSYDE_INTROSPECTION
+    void bindInfo()
+    {
+        boundOutChans.resize(1);    // only one output port
+        boundOutChans[0].port = &oport1;
+    }
+#endif
+};
+
+
+
 }
 }
 
