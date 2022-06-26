@@ -18,8 +18,15 @@ SC_MODULE(top)
     SC_CTOR(top)
     {   
         std::cout<<s1<<std::endl;
-        auto abstsig = new SY::signalabst<float> ("abstsig", s1, 3);
-        abstsig-> oport(out);
+        
+        ///! Construct without helper function 
+        // auto abstsig = new SY::signalabst<float> ("abstsig", s1, 6);
+        // abstsig-> oport(out);
+
+        ///! Construct with helper function
+        SY::make_signalabst ("abstsig", s1, 2, out);
+
+
         SY::make_ssink("report1", report_func, out);
     }
 };
