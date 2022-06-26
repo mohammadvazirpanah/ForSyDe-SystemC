@@ -2077,7 +2077,7 @@ private:
     
     unsigned long take;
     unsigned long tok_cnt;
-    float temp = 0;
+    float tok_sum;
 
 
     //Implementing the abstract semantics
@@ -2085,6 +2085,8 @@ private:
     {
         oval = new T;
         tok_cnt = 0;
+        tok_sum = 0;
+
 
     }
     
@@ -2094,21 +2096,22 @@ private:
     
     void prod()
     {
-        for (unsigned int i=0; i<in_vec.size(); i++)
+        for (unsigned int i=0; i<in_vec.size();)
         {
             while (tok_cnt<take)
             {
-                temp += in_vec[i];
+                tok_sum += in_vec[i];
                 tok_cnt++;
                 i++;
             }
 
-            *oval = (temp/take);
+            *oval = (tok_sum/take);
             WRITE_MULTIPORT(oport, abst_ext<T>(*oval))
             tok_cnt = 0;
-            temp = 0;
+            tok_sum = 0;
         }
-
+        
+        wait();
 
     }
     
