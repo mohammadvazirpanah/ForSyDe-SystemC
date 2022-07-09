@@ -1990,6 +1990,94 @@ private:
 #endif
 };
 
+template <class T0, class T1>
+class signalabst : public sy_process
+{
+public:
+    typedef std::function<void(T1&, const unsigned long&, const std::vector<T0>&)> functype;
+    
+    SY_in <T0> iport1;      ///< port for the input channel                   
+    SY_out <T1> oport1;      ///< port for the output channel
+
+    signalabst(const sc_module_name& _name,   
+             const unsigned long& take_samples, functype _func
+             ) : sy_process(_name), take_samples(take_samples), _func(_func)
+    {
+#ifdef FORSYDE_INTROSPECTION
+
+
+#endif
+    }
+    
+    //! Specifying from which process constructor is the module built
+    std::string forsyde_kind() const {return "SY::signalabst";}
+    
+private:
+
+    unsigned long take_samples;
+    functype _func;
+    T0* ival1;
+    T1* oval1;
+    int tok_cnt;
+    std::vector<T0>* ivals;
+    
+
+    //Implementing the abstract semantics
+    void init() 
+    {
+        ival1 = new T0;
+        oval1 = new T1;
+        tok_cnt = 0;
+
+    }
+    
+    void prep() 
+    {
+        auto ival1_temp = iport1.read();
+        *ival1 = unsafe_from_abst_ext(ival1_temp);
+        ivals->push_back(*ival1);
+        tok_cnt ++;
+
+
+    }
+    
+    void exec() 
+    {
+        if (tok_cnt == take_samples)
+        {
+            _func(*oval1, take_samples, *ivals);
+            tok_cnt = 0;
+        }
+
+        else 
+        {
+            // oval1->set_abst();
+            *oval1 = 0;
+
+        }
+       
+    }
+    
+    void prod()
+    {
+        WRITE_MULTIPORT(oport1, abst_ext<T1>(*oval1))
+    }
+    
+    void clean() 
+    {
+        delete oval1;
+        delete ival1;
+    }
+    
+#ifdef FORSYDE_INTROSPECTION
+    void bindInfo()
+    {
+        boundOutChans.resize(1);    // only one output port
+        boundOutChans[0].port = &oport;
+    }
+#endif
+};
+
 // template <typename T0, typename T1>
 // class abstvalue : public sy_process
 // {
@@ -2045,91 +2133,6 @@ private:
 //         delete ival1;
 //         delete oval;
 //     }
-
-
-template <class T>
-class signalabst : public sy_process
-{
-public:
-    // SY_in <std::vector<T>> iport1;                    
-    SY_out <T> oport;     
-
-    signalabst(const sc_module_name& _name,   
-            const std::vector<T>& in_vec,
-             const unsigned long& take=0
-            ) : sy_process(_name), in_vec(in_vec), take(take)
-    {
-#ifdef FORSYDE_INTROSPECTION
-
-
-#endif
-    }
-    
-    //! Specifying from which process constructor is the module built
-    std::string forsyde_kind() const {return "SY::signalabst";}
-    
-private:
-
-    T* oval;
-
-    std::vector<T> in_vec;
-
-    
-    unsigned long take;
-    unsigned long tok_cnt;
-    float tok_sum;
-
-
-    //Implementing the abstract semantics
-    void init() 
-    {
-        oval = new T;
-        tok_cnt = 0;
-        tok_sum = 0;
-
-
-    }
-    
-    void prep() {}
-    
-    void exec() {}
-    
-    void prod()
-    {
-        for (unsigned int i=0; i<in_vec.size();)
-        {
-            while (tok_cnt<take)
-            {
-                tok_sum += in_vec[i];
-                tok_cnt++;
-                i++;
-            }
-
-            *oval = (tok_sum/take);
-            WRITE_MULTIPORT(oport, abst_ext<T>(*oval))
-            tok_cnt = 0;
-            tok_sum = 0;
-        }
-        
-        wait();
-
-    }
-    
-    void clean() 
-    {
-        delete oval;
-    }
-    
-#ifdef FORSYDE_INTROSPECTION
-    void bindInfo()
-    {
-        boundOutChans.resize(1);    // only one output port
-        boundOutChans[0].port = &oport1;
-    }
-#endif
-};
-
-
 
 }
 }
