@@ -2027,6 +2027,7 @@ private:
     {
         ival1 = new T0;
         oval1 = new T1;
+        ivals = new std::vector<T0>; 
         tok_cnt = 0;
 
     }
@@ -2047,13 +2048,12 @@ private:
         {
             _func(*oval1, take_samples, *ivals);
             tok_cnt = 0;
+            ivals->clear();
         }
 
         else 
         {
-            // oval1->set_abst();
             *oval1 = 0;
-
         }
        
     }

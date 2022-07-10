@@ -12,7 +12,6 @@ void report_func(float inp1)
 void abst_func(float& out, const unsigned long& take, const std::vector<float>& inp)
 {
 
-    // std::cout<<"input value: "<<inp<<std::endl;
  
         float sum = 0;
         for (unsigned long i = 0; i < inp.size(); i++)
@@ -21,7 +20,6 @@ void abst_func(float& out, const unsigned long& take, const std::vector<float>& 
         }
     
         out = (sum/take);
-
 }
 
 SC_MODULE(top)
