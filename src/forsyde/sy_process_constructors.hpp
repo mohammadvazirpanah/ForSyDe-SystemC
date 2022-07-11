@@ -2112,6 +2112,94 @@ private:
 #endif
 };
 
+template <class T0, class T1>
+class signalabst : public sy_process
+{
+public:
+    typedef std::function<void(abst_ext<T1>&, const unsigned long&, const std::vector<abst_ext<T0>>&)> functype;
+    
+    SY_in <T0> iport1;      ///< port for the input channel                   
+    SY_out <T1> oport1;      ///< port for the output channel
+
+    signalabst(const sc_module_name& _name,   
+             const unsigned long& take_samples, functype _func
+             ) : sy_process(_name), take_samples(take_samples), _func(_func)
+    {
+#ifdef FORSYDE_INTROSPECTION
+
+
+#endif
+    }
+    
+    //! Specifying from which process constructor is the module built
+    std::string forsyde_kind() const {return "SY::signalabst";}
+    
+private:
+
+    unsigned long take_samples;
+    std::vector<abst_ext<T0>>* ivals;
+    functype _func;
+    T0* ival1;
+    abst_ext<T1>* oval1;
+    int tok_cnt;
+    
+
+    //Implementing the abstract semantics
+    void init() 
+    {
+        ival1 = new T0;
+        oval1 = new abst_ext<T1>;
+        ivals = new std::vector<abst_ext<T0>>; 
+        tok_cnt = 0;
+
+    }
+    
+    void prep() 
+    {
+        auto ival1_temp = iport1.read();
+        *ival1 = unsafe_from_abst_ext(ival1_temp);
+        ivals->push_back(*ival1);
+        tok_cnt ++;
+    }
+    
+    void exec() 
+    {
+        if (tok_cnt == take_samples)
+        {
+            _func(*oval1, take_samples, *ivals);
+            tok_cnt = 0;
+            ivals->clear();
+        }
+
+        else 
+        {
+            oval1->set_abst();
+        }
+       
+    }
+    
+    void prod()
+    {
+        WRITE_MULTIPORT(oport1, abst_ext<T1>(*oval1))
+    }
+    
+    void clean() 
+    {
+        delete oval1;
+        delete ival1;
+    }
+    
+#ifdef FORSYDE_INTROSPECTION
+    void bindInfo()
+    {
+        boundInChans.resize(1);     // only one input port
+        boundInChans[0].port = &iport1;
+        boundOutChans.resize(1);    // only one output port
+        boundOutChans[0].port = &oport1;
+    }
+#endif
+};
+
 }
 }
 
