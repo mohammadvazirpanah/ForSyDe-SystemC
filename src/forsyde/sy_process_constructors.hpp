@@ -2122,7 +2122,7 @@ public:
     SY_out <T1> oport1;      ///< port for the output channel
 
     signalabst(const sc_module_name& _name,   
-             const unsigned long& take_samples, functype _func
+            const unsigned long& take_samples, functype _func
              ) : sy_process(_name), take_samples(take_samples), _func(_func)
     {
 #ifdef FORSYDE_INTROSPECTION
@@ -2136,28 +2136,29 @@ public:
     
 private:
 
-    unsigned long take_samples;
-    std::vector<abst_ext<T0>>* ivals;
-    functype _func;
-    T0* ival1;
+    abst_ext<T0>* ival1;
     abst_ext<T1>* oval1;
+    std::vector<abst_ext<T0>>* ivals;
+    unsigned long take_samples;
+    functype _func;
     int tok_cnt;
     
 
     //Implementing the abstract semantics
     void init() 
     {
-        ival1 = new T0;
+        ival1 = new abst_ext<T0>;
         oval1 = new abst_ext<T1>;
         ivals = new std::vector<abst_ext<T0>>; 
         tok_cnt = 0;
+        
 
     }
     
     void prep() 
     {
-        auto ival1_temp = iport1.read();
-        *ival1 = unsafe_from_abst_ext(ival1_temp);
+
+        *ival1 = iport1.read();
         ivals->push_back(*ival1);
         tok_cnt ++;
     }
@@ -2187,6 +2188,7 @@ private:
     {
         delete oval1;
         delete ival1;
+        delete ivals;
     }
     
 #ifdef FORSYDE_INTROSPECTION
@@ -2199,6 +2201,7 @@ private:
     }
 #endif
 };
+
 
 }
 }
