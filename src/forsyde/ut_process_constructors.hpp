@@ -1741,16 +1741,16 @@ private:
 #endif
 };
 
-template <class T1, class T2, class CS>
+template <class T1, class T2, class TCS>
 class zipU : public ut_process
 {
 public:
     UT_in<T1> iport1;        ///< port for the input channel 1
     UT_in<T2> iport2;        ///< port for the input channel 2
-    UT_in<CS> controlport;   ///< port for the control signal   
+    UT_in<TCS> controlport;   ///< port for the control signal   
     UT_out<std::tuple<std::vector<T1>,std::vector<T2>>> oport1;///< port for the output channel
 
-    typedef std::function<unsigned int(const CS&)> gamma_functype;
+    typedef std::function<unsigned int(const TCS&)> gamma_functype;
 
 
     //! The constructor requires the module name
@@ -1758,8 +1758,8 @@ public:
      * zips them together and writes the results using the output port
      */
     zipU(const sc_module_name& _name,
-        gamma_functype& _gamma_func_a,
-        gamma_functype& _gamma_func_b
+        const gamma_functype& _gamma_func_a,
+        const gamma_functype& _gamma_func_b
         ) : ut_process(_name), iport1("iport1"), iport2("iport2"), controlport("controlport"), oport1("oport1"),
         _gamma_func_a(_gamma_func_a), _gamma_func_b(_gamma_func_b) 
     { }
@@ -1774,7 +1774,7 @@ private:
     // intermediate values
     std::vector<T1> i1vals;
     std::vector<T2> i2vals;
-    CS control_tkn; 
+    TCS control_tkn; 
 
     void init()
     {
@@ -1784,8 +1784,8 @@ private:
     void prep()
     {
         control_tkn = controlport.read();
-        unsigned int c1 = gamma_func_a(control_tkn);
-        unsigned int c2 = gamma_func_b(control_tkn);
+        unsigned int c1 = _gamma_func_a(control_tkn);
+        unsigned int c2 = _gamma_func_b(control_tkn);
         
         i1vals.resize(c1);
         i2vals.resize(c2);
