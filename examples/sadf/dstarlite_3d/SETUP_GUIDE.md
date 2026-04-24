@@ -150,6 +150,52 @@ The robot starts at grid cell (0,0), navigates to (5,5), and replans
 
 ---
 
+---
+
+## Alternative Robot: Omni Robot (University Robot)
+
+Instead of TurtleBot3, the same simulation can run on the omni-directional
+robot developed at Shahid Beheshti University.
+
+### Extra Prerequisites
+
+- `rob_pkg` (omni robot package) in your catkin workspace:
+
+```bash
+git clone https://github.com/noyzzz/omni_robot.git \
+    ~/catkin_ws/src/rob_pkg/omni_robot
+```
+
+- Checkout the `omni-robot` branch of the worlds repository:
+
+```bash
+cd ~/catkin_ws/src/dstarlite_maze
+git checkout omni-robot
+```
+
+### Run (replace Terminal 1 command only)
+
+**Terminal 1 — Gazebo with omni robot:**
+
+```bash
+xhost +local: && \
+docker exec \
+  -e DISPLAY=$DISPLAY \
+  -e LIBGL_ALWAYS_SOFTWARE=1 \
+  ros_noetic bash -c \
+  "source /opt/ros/noetic/setup.bash && \
+   source /catkin_ws/devel/setup.bash && \
+   roslaunch dstarlite_maze dstarlite_omni.launch"
+```
+
+Terminals 2 and 3 are **identical** to the TurtleBot3 setup — no changes needed.
+
+> The omni robot URDF is extended with a virtual LiDAR (`/scan`) and a
+> planar-move plugin (`/cmd_vel` + `/odom`), so the ForSyDe simulation
+> connects to it without any code changes.
+
+---
+
 ## Project Structure
 
 ```
