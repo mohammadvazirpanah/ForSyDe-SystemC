@@ -159,14 +159,8 @@ robot developed at Shahid Beheshti University.
 
 ### Extra Prerequisites
 
-- `rob_pkg` (omni robot package) in your catkin workspace:
-
-```bash
-git clone https://github.com/noyzzz/omni_robot.git \
-    ~/catkin_ws/src/rob_pkg/omni_robot
-```
-
-- Checkout the `omni-robot` branch of the worlds repository:
+Checkout the `omni-robot` branch of the worlds repository (the omni robot
+model is bundled inside it — no extra clone needed):
 
 ```bash
 cd ~/catkin_ws/src/dstarlite_maze
