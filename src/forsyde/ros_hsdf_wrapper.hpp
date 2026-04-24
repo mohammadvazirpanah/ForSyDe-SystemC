@@ -1,3 +1,17 @@
+/**********************************************************************
+    * ros_hsdf_wrapper.hpp -- ROS/ForSyDe-SystemC interface wrapper  *
+    *                                                                 *
+    * Author:  Mohammad Vazirpanah (mohammad.vazirpanah@yahoo.com)    *
+    *                                                                 *
+    * Purpose: Provides a ForSyDe-SystemC process wrapper that        *
+    *          bridges ROS topics (publish/subscribe) with HSDF       *
+    *          signal ports, enabling ROS-based actors to participate *
+    *          in a ForSyDe simulation graph.                         *
+    *                                                                 *
+    * Usage:   D*-Lite path planning on TurtleBot3 via ROS/Gazebo     *
+    *                                                                 *
+    * License: BSD3                                                   *
+    *******************************************************************/
 #ifndef ROS_HSDF_WRAPPERS_HPP
 #define ROS_HSDF_WRAPPERS_HPP
 
