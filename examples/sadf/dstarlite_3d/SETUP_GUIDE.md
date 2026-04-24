@@ -19,7 +19,7 @@
 git clone https://github.com/mohammadvazirpanah/ForSyDe-SystemC.git \
     -b sadf-dstarlite-ros ~/ForSyDe-SystemC
 
-git clone https://github.com/mohammadvazirpanah/dstarlite_maze.git \
+git clone https://github.com/mohammadvazirpanah/forsyde-ros-gazebo-worlds.git \
     ~/catkin_ws/src/dstarlite_maze
 ```
 
