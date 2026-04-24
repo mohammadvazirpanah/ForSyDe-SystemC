@@ -1,3 +1,16 @@
+/**********************************************************************
+    * globals.hpp -- shared types, constants, and global state       *
+    *                                                                 *
+    * Author:  Mohammad Vazirpanah (mohammad.vazirpanah@yahoo.com)    *
+    *                                                                 *
+    * Purpose: Defines ROS/Gazebo data types, grid cell structure,    *
+    *          scenario enumeration, and global maze/path variables   *
+    *          shared across all SADF actors.                         *
+    *                                                                 *
+    * Usage:   D*-Lite path planning on TurtleBot3 via ROS/Gazebo     *
+    *                                                                 *
+    * License: BSD3                                                   *
+    *******************************************************************/
 #ifndef GLOBALS_HPP
 #define GLOBALS_HPP
 

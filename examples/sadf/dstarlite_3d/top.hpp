@@ -1,3 +1,16 @@
+/**********************************************************************
+    * top.hpp -- top-level ForSyDe-SystemC module                    *
+    *                                                                 *
+    * Author:  Mohammad Vazirpanah (mohammad.vazirpanah@yahoo.com)    *
+    *                                                                 *
+    * Purpose: Wires together all SADF actors (monitor, controller,   *
+    *          abstract_sys, SAF detector) and the ROS wrapper for    *
+    *          /odom, /scan, and /cmd_vel topics.                     *
+    *                                                                 *
+    * Usage:   D*-Lite path planning on TurtleBot3 via ROS/Gazebo     *
+    *                                                                 *
+    * License: BSD3                                                   *
+    *******************************************************************/
 #ifndef TOP_HPP
 #define TOP_HPP
 

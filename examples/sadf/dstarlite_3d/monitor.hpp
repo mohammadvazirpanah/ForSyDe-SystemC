@@ -1,3 +1,16 @@
+/**********************************************************************
+    * monitor.hpp -- SDF combinator: sensor fusion monitor actor     *
+    *                                                                 *
+    * Author:  Mohammad Vazirpanah (mohammad.vazirpanah@yahoo.com)    *
+    *                                                                 *
+    * Purpose: Fuses LiDAR scan and odometry data to produce a        *
+    *          monitor state containing robot status, obstacle        *
+    *          directions (body frame), and current pose.             *
+    *                                                                 *
+    * Usage:   D*-Lite path planning on TurtleBot3 via ROS/Gazebo     *
+    *                                                                 *
+    * License: BSD3                                                   *
+    *******************************************************************/
 #ifndef MONITOR_HPP
 #define MONITOR_HPP
 

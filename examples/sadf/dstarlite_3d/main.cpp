@@ -1,3 +1,15 @@
+/**********************************************************************
+    * main.cpp -- entry point for the D*-Lite/SADF simulation        *
+    *                                                                 *
+    * Author:  Mohammad Vazirpanah (mohammad.vazirpanah@yahoo.com)    *
+    *                                                                 *
+    * Purpose: Instantiates the top-level ForSyDe-SystemC module and  *
+    *          starts the SystemC simulation kernel.                  *
+    *                                                                 *
+    * Usage:   D*-Lite path planning on TurtleBot3 via ROS/Gazebo     *
+    *                                                                 *
+    * License: BSD3                                                   *
+    *******************************************************************/
 #include <forsyde.hpp>
 #include "top.hpp"
 

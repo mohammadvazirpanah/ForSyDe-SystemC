@@ -1,3 +1,16 @@
+/**********************************************************************
+    * maze.hpp -- grid maze allocation and D*-Lite graph setup       *
+    *                                                                 *
+    * Author:  Mohammad Vazirpanah (mohammad.vazirpanah@yahoo.com)    *
+    *                                                                 *
+    * Purpose: Allocates the 2-D grid, initialises successor edges,   *
+    *          and provides the D*-Lite initialisation routine called  *
+    *          once at simulation start by the controller.            *
+    *                                                                 *
+    * Usage:   D*-Lite path planning on TurtleBot3 via ROS/Gazebo     *
+    *                                                                 *
+    * License: BSD3                                                   *
+    *******************************************************************/
 #ifndef MAZE_HPP
 #define MAZE_HPP
 

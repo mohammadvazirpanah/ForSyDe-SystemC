@@ -1,4 +1,16 @@
-/* D* Lite (final version) - Maxim Likhachev (CMU) and Sven Koenig (USC) */
+/**********************************************************************
+    * heap.hpp -- priority queue (min-heap) for D*-Lite             *
+    *                                                                 *
+    * Original authors: Maxim Likhachev (CMU), Sven Koenig (USC)     *
+    * Adapted by: Mohammad Vazirpanah (mohammad.vazirpanah@yahoo.com) *
+    *                                                                 *
+    * Purpose: Provides the open-list heap used by the D*-Lite       *
+    *          shortest-path algorithm to order cells by key value.   *
+    *                                                                 *
+    * Usage:   D*-Lite path planning on TurtleBot3 via ROS/Gazebo     *
+    *                                                                 *
+    * License: BSD3                                                   *
+    *******************************************************************/
 
 #ifndef HEAP_HPP
 #define HEAP_HPP

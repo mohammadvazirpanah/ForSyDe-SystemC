@@ -1,3 +1,16 @@
+/**********************************************************************
+    * controller.hpp -- SADF kernel: D*-Lite controller actor        *
+    *                                                                 *
+    * Author:  Mohammad Vazirpanah (mohammad.vazirpanah@yahoo.com)    *
+    *                                                                 *
+    * Purpose: Implements the D*-Lite algorithm functions and the     *
+    *          SADF kernel process that drives robot movement,        *
+    *          updates the obstacle map, and issues velocity commands. *
+    *                                                                 *
+    * Usage:   D*-Lite path planning on TurtleBot3 via ROS/Gazebo     *
+    *                                                                 *
+    * License: BSD3                                                   *
+    *******************************************************************/
 #ifndef CONTROLLER_HPP
 #define CONTROLLER_HPP
 

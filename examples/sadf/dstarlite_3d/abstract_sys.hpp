@@ -1,3 +1,16 @@
+/**********************************************************************
+    * abstract_sys.hpp -- SADF kernel: abstract system model         *
+    *                                                                 *
+    * Author:  Mohammad Vazirpanah (mohammad.vazirpanah@yahoo.com)    *
+    *                                                                 *
+    * Purpose: Implements the abstract self-model that fires only on  *
+    *          REPLAN scenarios to re-run the D*-Lite shortest-path   *
+    *          computation after new obstacles are detected.          *
+    *                                                                 *
+    * Usage:   D*-Lite path planning on TurtleBot3 via ROS/Gazebo     *
+    *                                                                 *
+    * License: BSD3                                                   *
+    *******************************************************************/
 #ifndef ABSTRACT_SYS_HPP
 #define ABSTRACT_SYS_HPP
 

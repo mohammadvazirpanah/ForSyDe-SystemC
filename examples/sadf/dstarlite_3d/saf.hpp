@@ -1,3 +1,16 @@
+/**********************************************************************
+    * saf.hpp -- SADF detector: scenario activation function         *
+    *                                                                 *
+    * Author:  Mohammad Vazirpanah (mohammad.vazirpanah@yahoo.com)    *
+    *                                                                 *
+    * Purpose: Implements the SAF detector that selects the active    *
+    *          scenario (NORMAL or REPLAN) based on the monitor state *
+    *          and drives the scenario tokens to all SADF kernels.    *
+    *                                                                 *
+    * Usage:   D*-Lite path planning on TurtleBot3 via ROS/Gazebo     *
+    *                                                                 *
+    * License: BSD3                                                   *
+    *******************************************************************/
 #ifndef SAF_HPP
 #define SAF_HPP
 
