@@ -1,0 +1,19 @@
+
+# Compiled binaries
+*.o
+*.x
+*.P
+run.x
+main
+
+# Generated ForSyDe introspection files
+gen/*.xml
+gen/*.dot
+gen/forsyde.conf
+
+# ROS headers (available via ROS installation)
+src/forsyde/include/
+
+# IDE
+.vscode/
+gen/myenv/
